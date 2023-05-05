@@ -1,29 +1,66 @@
 ---
 title: "Code"
-author: "Eric Chen"
+author: "Eric Chen, Junhan Li, & Daniel Fredin"
 output: pdf_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r include=FALSE, echo=TRUE}
+# Libraries
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(splitstackshape)
+library(readr)
+
+library(car)
+library(lmtest)
+library(rcompanion)
+library(olsrr)
+
+library(maps)
+library(usmap)
 ```
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r include=FALSE, echo=TRUE}
+#attorneys <- read.csv("data/attorneys.csv")
+#attorneys_time <- read.csv("data/attorneytimeentries.csv")
+categories <- read.csv("data/categories.csv")
+clients <- read.csv("data/clients.csv")
+#questionposts <- read.csv("data/questionposts.csv")
+questions <- read.csv("data/questions.csv")
+statesites <- read.csv("data/statesites.csv")
+subcategories <- read.csv("data/subcategories.csv")
 ```
 
-## Including Plots
 
-You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+
+
+
+# Visualization 1
+
+```{r}
+top_subcats <- questions %>%
+  group_by(Subcategory) %>%
+  summarise(num_subcats = n()) %>%
+  ungroup()
+
+top_subcats <- top_subcats %>%
+  arrange(desc(num_subcats)) %>%
+  head(15)
+
+ggplot(top_subcats, aes(x = num_subcats, y = reorder(Subcategory, num_subcats))) +
+  geom_bar(stat = "Identity", fill = "#00A19B") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(title = "Top 15 Subcategories",
+       x = "Number of Clients",
+       y = "Category")
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+# Visualization 2
+
+
+# Visualization 3
+
