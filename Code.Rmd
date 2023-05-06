@@ -1,6 +1,6 @@
 ---
 title: "Code"
-author: "Eric Chen, Junhan Li, & Daniel Fredin"
+author: "Eric Chen, Junhan Li, & Daniel Fredin, Test"
 output: pdf_document
 ---
 
@@ -22,14 +22,14 @@ library(usmap)
 ```
 
 ```{r include=FALSE, echo=TRUE}
-#attorneys <- read.csv("data/attorneys.csv")
-#attorneys_time <- read.csv("data/attorneytimeentries.csv")
-categories <- read.csv("data/categories.csv")
-clients <- read.csv("data/clients.csv")
-#questionposts <- read.csv("data/questionposts.csv")
-questions <- read.csv("data/questions.csv")
-statesites <- read.csv("data/statesites.csv")
-subcategories <- read.csv("data/subcategories.csv")
+attorneys <- read.csv("attorneys.csv")
+attorneys_time <- read.csv("attorneytimeentries.csv")
+categories <- read.csv("categories.csv")
+clients <- read.csv("clients.csv")
+questionposts <- read.csv("questionposts.csv")
+questions <- read.csv("questions.csv")
+statesites <- read.csv("statesites.csv")
+subcategories <- read.csv("subcategories.csv")
 ```
 
 
