@@ -1,6 +1,6 @@
 ---
 title: "Code"
-author: "Eric Chen, Junhan Li, & Daniel Fredin, Test"
+author: "Eric Chen, Junhan Li, & Daniel Fredin"
 output: pdf_document
 ---
 
@@ -22,6 +22,7 @@ library(usmap)
 ```
 
 ```{r include=FALSE, echo=TRUE}
+# Load datasets
 attorneys <- read.csv("attorneys.csv")
 attorneys_time <- read.csv("attorneytimeentries.csv")
 categories <- read.csv("categories.csv")
@@ -32,37 +33,88 @@ statesites <- read.csv("statesites.csv")
 subcategories <- read.csv("subcategories.csv")
 ```
 
+#### Data Cleaning
+
 ```{r}
+# Remove unwanted columns for all datasets
+attorneys <- attorneys %>%
+  select(-Id, -CreatedUtc, -City, -PostalCode)
+
+attorneys_time <- attorneys_time %>%
+  select(-Id, -EnteredOnUtc, -TimeEntryUno)
+
+categories <- categories %>%
+  select(-Id)
+
 clients <- clients %>%
-  filter(Age != "NULL") %>%
-  filter(MaritalStatus != "NULL") %>%
-  filter(AnnualIncome != "NULL") %>%
-  filter(SavingsBalance != "NULL") %>%
-  filter(CheckingBalance != "NULL") %>%
-  filter(AllowedIncome != "NULL") 
+  select(-Id, -PostalCode, -CreatedUtc, -InvestmentsBalance)
 
-data_overall <- clients %>%
-  select(StateAbbr, Age, NumberInHousehold, MaritalStatus, AnnualIncome, SavingsBalance, CheckingBalance, AllowedIncome)
-  
+questionposts <- questionposts %>%
+  select(-Id, -CreatedUtc)
+
+questions <- questions %>%
+  select(-Id, -AskedOnUtc, -TakenOnUtc, -ClosedOnUtc, -LegalDeadline, -ClosedByAttorneyUno)
+
+statesites <- statesites %>%
+  select(-Id)
+
+subcategories <- subcategories %>%
+  select(-Id)
 ```
 
 ```{r}
-data_overall$Age <- as.integer(data_overall$Age)
-data_overall$NumberInHousehold <- as.integer(data_overall$NumberInHousehold)
-data_overall$AnnualIncome <- as.numeric(data_overall$AnnualIncome)
-data_overall$AllowedIncome <- as.numeric(data_overall$AllowedIncome)
-data_overall$CheckingBalance <- as.numeric(data_overall$CheckingBalance)
-data_overall$SavingsBalance <- as.numeric(data_overall$SavingsBalance)
+# Convert characters to numeric in client dataset
+clients$Age <- as.integer(clients$Age)
+clients$NumberInHousehold <- as.integer(clients$NumberInHousehold)
+clients$AnnualIncome <- as.numeric(clients$AnnualIncome)
+clients$AllowedIncome <- as.numeric(clients$AllowedIncome)
+clients$CheckingBalance <- as.numeric(clients$CheckingBalance)
+clients$SavingsBalance <- as.numeric(clients$SavingsBalance)
 ```
 
 ```{r}
-cor(data_overall[,c(2,3,5,6,7,8)])
+# rename columns to match other datasets
+questions <- questions %>%
+  rename("ClientUno" = "AskedByClientUno", "AttorneyUno" = "TakenByAttorneyUno")
 ```
 
 ```{r}
-table(categories$Category)
+# Merge into two dataframes
+
+# df1 is all datasets except attorney and attorney_time
+df1 <- left_join(clients, questions, join_by("StateAbbr", "ClientUno")) %>% 
+  left_join(., categories, join_by("StateAbbr", "CategoryUno", "Category")) %>%
+  left_join(.,subcategories, join_by("StateAbbr", "CategoryUno", "Subcategory", "SubcategoryUno")) %>%
+  left_join(., questionposts, join_by("StateAbbr", "QuestionUno")) %>%
+  left_join(., statesites, join_by("StateAbbr", "StateName"))
+
+# df2 is the two attorney datasets
+df2 <- left_join(attorneys, attorneys_time, join_by("StateAbbr", "AttorneyUno")) 
 ```
 
+```{r}
+# Select the independent variables we want to observe
+# Remove all NA
+
+data_overall <- df1 %>%
+  select(StateAbbr, Age, NumberInHousehold, MaritalStatus, AnnualIncome, SavingsBalance, CheckingBalance, AllowedIncome, Category, Subcategory, ClientUno) %>%
+  distinct(ClientUno, .keep_all = TRUE) %>%
+  select(-ClientUno) %>%
+  na.omit(df1)
+```
+
+
+
+#### Testing models
+
+```{r}
+data_overall$Subcategory <- ifelse(str_detect(data_overall$Subcategory, "Divorce"), 1, 0)
+```
+
+```{r}
+model <- glm(factor(Subcategory) ~ . -Category -StateAbbr, data = data_overall, family = 'binomial')
+summary(model)
+```
 
 
 
