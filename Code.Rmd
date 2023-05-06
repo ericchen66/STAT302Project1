@@ -103,7 +103,19 @@ data_overall <- df1 %>%
   na.omit(df1)
 ```
 
-
+Datasets: 
+  - Statesites
+    - StateAbbr
+    - AllowedAssets
+    - BaseIncomeLimit
+    - PerHouseholdMemberIncomeLimit
+    - IncomeMultiplier 
+  - Client
+    - StateAbbr
+    - Prettymuch the entire dataset 
+  - Categories
+    - Category: Family and Children 
+   -nSubcategories: everything related to divorces
 
 #### Testing models
 
