@@ -32,7 +32,36 @@ statesites <- read.csv("statesites.csv")
 subcategories <- read.csv("subcategories.csv")
 ```
 
+```{r}
+clients <- clients %>%
+  filter(Age != "NULL") %>%
+  filter(MaritalStatus != "NULL") %>%
+  filter(AnnualIncome != "NULL") %>%
+  filter(SavingsBalance != "NULL") %>%
+  filter(CheckingBalance != "NULL") %>%
+  filter(AllowedIncome != "NULL") 
 
+data_overall <- clients %>%
+  select(StateAbbr, Age, NumberInHousehold, MaritalStatus, AnnualIncome, SavingsBalance, CheckingBalance, AllowedIncome)
+  
+```
+
+```{r}
+data_overall$Age <- as.integer(data_overall$Age)
+data_overall$NumberInHousehold <- as.integer(data_overall$NumberInHousehold)
+data_overall$AnnualIncome <- as.numeric(data_overall$AnnualIncome)
+data_overall$AllowedIncome <- as.numeric(data_overall$AllowedIncome)
+data_overall$CheckingBalance <- as.numeric(data_overall$CheckingBalance)
+data_overall$SavingsBalance <- as.numeric(data_overall$SavingsBalance)
+```
+
+```{r}
+cor(data_overall[,c(2,3,5,6,7,8)])
+```
+
+```{r}
+table(categories$Category)
+```
 
 
 
