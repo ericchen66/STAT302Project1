@@ -101,6 +101,9 @@ data_overall <- df1 %>%
   distinct(ClientUno, .keep_all = TRUE) %>%
   select(-ClientUno) %>%
   na.omit(df1)
+
+# Remove all NUll from the MaritalStatus variable 
+data_overall <- data_overall %>%  filter(data_overall$MaritalStatus != "NULL")
 ```
 
 # Change the subcategory to binary categorical data 
@@ -179,30 +182,40 @@ divorce_distrib[divorce_distrib$Var2 != 0, ]
 colnames(divorce_distrib)[which(names(divorce_distrib) == "Var1")] <- "state"
 
 # state_divorce <- 
-plot_usmap(data = divorce_distrib, values = "Freq", color = "red") + 
+plot_usmap(data = divorce_distrib, values = "Freq", color = "red", labels = TRUE) + 
   scale_fill_continuous(
     low = "white", high = "red", name = "Frequency of Divorce Related Questions"
     , label = scales::comma
-  ) + theme(legend.position = "right")
+  ) + theme(legend.position = "right") +
+  map.text("")
 
 ```
-Certain States such as: are shown in gray because out of confidentiality and per
-state law, they are not allowed to provided clients; information. 
+Certain States such as: Washington, Oregon, Nevada, Montana, Colorad, Minnesota,
+Ohio, and Kentucky are shown in gray because out of confidentiality and per
+state law, they are not allowed to provided clients' information. 
 
-However, the US map plot of distribution of divorce rate 
+However, the US map plot of distribution of divorce questions mentioned in 
+conversation does varied by states. Foe example
 
 
-Rubbish Code:(Keep if for now)
-ggplot(data=divorce_distrib, aes(x=long, y=lat, fill=region, group=group)) + 
-  geom_polygon(color = "white", fill="gray") + 
-  guides(fill=FALSE) + 
-  theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank(),
-        axis.title.y=element_blank(), axis.text.y=element_blank(), axis.ticks.y=element_blank()) + 
-  ggtitle('Distribution of the Marriage Issues Across United States') + 
-  coord_fixed(1.3)
+
   
 # Visualization 3: Financial Status Correlation with Divorce Rate
 We need to use that facet, wrap, colored shit here. 
+```{r setup, include=TRUE}
+data_overall %>%
+ggplot(aes(x = average_complexity, y = average_rating, color = game_type)) +
+  geom_point() +
+  geom_smooth(color= "black") +
+  labs(x = " Average Complexity",
+       y = "Average Rating",
+       title = "Average Complexity VS Average Rating") +
+  facet_wrap(~game_type) +
+  theme_bw(base_size = 10) +
+  theme(plot.title =
+          element_text(hjust = 0.5))
+```
+
 
 
 #### Testing models
