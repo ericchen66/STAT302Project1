@@ -172,22 +172,24 @@ related questions?"
   
 
 # Visualization 2: US Map of Divorce Related Questions Distribution
-```{r setup, include=TRUE}
+```{r}
 # Create a data set with divorce related questions frequency per state
 contingency <- table(data_overall$StateAbbr,data_overall$Subcategory)
 divorce_distrib <- as.data.frame(contingency)
-divorce_distrib[divorce_distrib$Var2 != 0, ]  
 
 # Change the column name var1 to state, so we can use plot_usmap
 colnames(divorce_distrib)[which(names(divorce_distrib) == "Var1")] <- "state"
+# Selects the number of divorces per state
+divorce_plot <- divorce_distrib[divorce_distrib$Var2 != 0, ]  
 
-# state_divorce <- 
-plot_usmap(data = divorce_distrib, values = "Freq", color = "red", labels = TRUE) + 
+
+# Plots the distribution of divorces in each state
+plot_usmap(data = divorce_plot, values = "Freq", color = "red") + 
   scale_fill_continuous(
     low = "white", high = "red", name = "Frequency of Divorce Related Questions"
-    , label = scales::comma
-  ) + theme(legend.position = "right") +
-  map.text("")
+    , label = scales::comma) + 
+  theme(legend.position = "right") +
+  labs(title = "US map plot of distribution of divorce rate")
 
 ```
 Certain States such as: Washington, Oregon, Nevada, Montana, Colorad, Minnesota,
@@ -198,7 +200,46 @@ However, the US map plot of distribution of divorce questions mentioned in
 conversation does varied by states. Foe example
 
 
+```{r}
+# Create a data set with divorce related questions frequency per state
+contingency <- table(data_overall$StateAbbr,data_overall$Subcategory)
+divorce_distrib <- as.data.frame(contingency)
 
+# Change the column name var1 to state, so we can use plot_usmap
+colnames(divorce_distrib)[which(names(divorce_distrib) == "Var1")] <- "state"
+# Selects the number of divorces per state
+divorce_plot <- divorce_distrib[divorce_distrib$Var2 != 0, ] 
+# Changes state variable back to charcter
+divorce_plot$state <- as.character(divorce_plot$state)
+# Retrieve state populations and rename abbr column to state
+states_pop <- statepop
+states_pop <- states_pop %>%
+  rename("state" = "abbr")
+
+# Merge the population data with divorce data
+dfDivorce <- left_join(states_pop, divorce_plot, join_by("state")) %>%
+  select(-fips, -full) %>%
+  mutate(distrib = ((Freq/pop_2015)*100000)) %>%
+  select(-Freq, -pop_2015)
+
+# Plots the distribution of divorces in each state per population
+plot_usmap(data = dfDivorce, values = "distrib", color = "red") + 
+  scale_fill_continuous(
+    low = "white", high = "red", name = 
+      "Divorce Related Questions per 100,000 people"
+    , label = scales::comma) + 
+  theme(legend.position = "bottom") +
+  labs(title = "US map plot of distribution of divorce related questions")
+```
+This is might be better to look at the number of divorces per the population because as we'd expect, states with a large population would have more divorce related questions.
+
+Also a bit weird that state like California and Idaho don't have any divorce related questions. I think thats because when we filtered the subcategories, those states don't have any subcategories with "Divorce". I don't know how we'd account for that...
+
+Also the project instructions say to use ggplot2 for our visualization. I find that plot_usmap is its own package so should we try to create a us map plot using ggplot2?
+
+  
+  
+  
   
 # Visualization 3: Financial Status Correlation with Divorce Rate
 We need to use that facet, wrap, colored shit here. 
