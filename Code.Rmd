@@ -116,22 +116,11 @@ Datasets:
   - Categories
     - Category: Family and Children 
    -nSubcategories: everything related to divorces
-
-#### Testing models
-
-```{r}
-data_overall$Subcategory <- ifelse(str_detect(data_overall$Subcategory, "Divorce"), 1, 0)
-```
-
-```{r}
-model <- glm(factor(Subcategory) ~ . -Category -StateAbbr, data = data_overall, family = 'binomial')
-summary(model)
-```
-
-
-
-# Visualization 1
-
+   
+   
+   
+   
+# Visualization 1: Investigating the Top 15 Subcategories of Asked Questions
 ```{r}
 top_subcats <- questions %>%
   group_by(Subcategory) %>%
@@ -148,12 +137,55 @@ ggplot(top_subcats, aes(x = num_subcats, y = reorder(Subcategory, num_subcats)))
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   labs(title = "Top 15 Subcategories",
        x = "Number of Clients",
-       y = "Category")
+       y = "Subcategory")
 
 ```
+Interpretation:
+  For our project, we want to started off with investigating the most frequently 
+asked legal questions subcategories so we can define a most common question type
+based on the data set we have at hand and use it as the theme of our research 
+question. 
 
-# Visualization 2
+  Based on our side way bar chart, it is clear to see that out of the top 15 
+subcategories, among the top three categories of questions asked by clients on 
+the online platform, two of them are related to divorce.The question of subcategory 
+Family/Divorce/Custody has the highest frequency among the top 15, and it has been
+asked by almost twice as many clients than the second subcategory of others, which
+is showing that the divorce related questions should be treated with more 
+preparation when it comes to training volunteers.  
+
+  This is intriguing to us as it begs for answers to the questions such as 
+"What are the major determinants of divorce?","Does the clients' backgrounds
+affect their tendency to ask divorce related question on the ABA online platform?"
+,and most importantly, "How do we prepare our volunteers to address these divorce
+related questions?"
+  
+
+# Visualization 2: US Map of Divorce Related Questions Distribution
+```{r setup, include=TRUE}
+ggplot(data=state, aes(x=long, y=lat, fill=region, group=group)) + 
+  geom_polygon(color = "white", fill="gray") + 
+  guides(fill=FALSE) + 
+  theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank(),
+        axis.title.y=element_blank(), axis.text.y=element_blank(), axis.ticks.y=element_blank()) + 
+  ggtitle('Distribution of the Marriage Issues Across United States') + 
+  coord_fixed(1.3)
+```
+
+# Visualization 3: Financial Status Correlation with Divorce Rate
 
 
-# Visualization 3
+
+#### Testing models
+
+```{r}
+data_overall$Subcategory <- ifelse(str_detect(data_overall$Subcategory, "Divorce"), 1, 0)
+```
+
+```{r}
+model <- glm(factor(Subcategory) ~ . -Category -StateAbbr, data = data_overall, family = 'binomial')
+summary(model)
+```
+
+
 
