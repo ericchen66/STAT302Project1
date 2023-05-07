@@ -220,14 +220,20 @@ Also the project instructions say to use ggplot2 for our visualization. I find t
 # Visualization 3: Financial Status Correlation with Divorce Rate
 We need to use that facet, wrap, colored shit here. 
 ```{r setup, include=TRUE}
-data_overall %>%
-ggplot(aes(x = average_complexity, y = average_rating, color = game_type)) +
+# Get rid of outliers
+quartiles <- quantile(data_overall$AnnualIncome, probs=c(.25, .75), na.rm = FALSE)
+IQR <- IQR(data_overall$AnnualIncome)
+Lower <- quartiles[1] - 1.5*IQR
+Upper <- quartiles[2] + 1.5*IQR
+data_noOutlier <- subset(data_overall, AnnualIncome > Lower & AnnualIncome < Upper)
+
+data_noOutlier %>% 
+ggplot(aes(x = Subcategory , y = AnnualIncome)) +
   geom_point() +
-  geom_smooth(color= "black") +
-  labs(x = " Average Complexity",
-       y = "Average Rating",
+  labs(x = " AnnualIncome",
+       y = "Divorce Questions Mentioned",
        title = "Average Complexity VS Average Rating") +
-  facet_wrap(~game_type) +
+  facet_wrap(~MaritalStatus) +
   theme_bw(base_size = 10) +
   theme(plot.title =
           element_text(hjust = 0.5))
