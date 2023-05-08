@@ -219,21 +219,20 @@ Also the project instructions say to use ggplot2 for our visualization. I find t
   
 # Visualization 3: Financial Status Correlation with Divorce Rate
 We need to use that facet, wrap, colored shit here. 
-```{r setup, include=TRUE}
+```{r}
 # Get rid of outliers
 quartiles <- quantile(data_overall$AnnualIncome, probs=c(.25, .75), na.rm = FALSE)
 IQR <- IQR(data_overall$AnnualIncome)
 Lower <- quartiles[1] - 1.5*IQR
 Upper <- quartiles[2] + 1.5*IQR
-data_noOutlier <- subset(data_overall, AnnualIncome > Lower & AnnualIncome < Upper)
+data_noOutlier <- subset(data_overall, AnnualIncome > Lower & AnnualIncome < Upper & AnnualIncome > 0)
 
-data_noOutlier %>% 
-ggplot(aes(x = Subcategory , y = AnnualIncome)) +
+ggplot(data = data_noOutlier, aes(x = AnnualIncome , y = MaritalStatus)) +
   geom_point() +
   labs(x = " AnnualIncome",
-       y = "Divorce Questions Mentioned",
-       title = "Average Complexity VS Average Rating") +
-  facet_wrap(~MaritalStatus) +
+       y = "Divorce related Questions Mentioned",
+       title = "Divorce related questions analysis with Client Annual Income and Marital Status") +
+  facet_wrap(~ Subcategory) +
   theme_bw(base_size = 10) +
   theme(plot.title =
           element_text(hjust = 0.5))
@@ -243,15 +242,16 @@ ggplot(aes(x = Subcategory , y = AnnualIncome)) +
 
 #### Testing models
 
-```{r}
-data_overall$Subcategory <- ifelse(str_detect(data_overall$Subcategory, "Divorce"), 1, 0)
-```
+We might need to remove the StateAbbr "US"???
 
 # Model 1
 ```{r}
 
-model <- glm(factor(Subcategory) ~ . -Category -StateAbbr, data = data_overall, family = 'binomial')
-summary(model)
+model1 <- glm(factor(Subcategory) ~ . -Category, data = data_overall, family = 'binomial')
+summary(model1)
+
+model2 <- glm(factor(Subcategory) ~ . -Category - StateAbbr, data = data_overall, family = 'binomial')
+summary(model2)
 ```
 Assumes that there is no severe multicollinearity
 Assume 
