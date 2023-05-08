@@ -1,10 +1,10 @@
 ---
-title: "Code"
+title: "Project 1 - Analysis of American Bar Association data"
 author: "Eric Chen, Junhan Li, & Daniel Fredin"
 output: pdf_document
 ---
 
-```{r include=FALSE, echo=TRUE}
+```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Libraries
 library(tidyverse)
 library(ggplot2)
@@ -19,7 +19,7 @@ library(maps)
 library(usmap)
 ```
 
-```{r include=FALSE, echo=TRUE}
+```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Load datasets
 attorneys <- read.csv("attorneys.csv")
 attorneys_time <- read.csv("attorneytimeentries.csv")
@@ -31,9 +31,8 @@ statesites <- read.csv("statesites.csv")
 subcategories <- read.csv("subcategories.csv")
 ```
 
-#### Data Cleaning
-
-```{r}
+```{r eval= TRUE, include=FALSE, echo=FALSE}
+## DATA CLEANING
 # Remove unwanted columns for all datasets
 attorneys <- attorneys %>%
   select(-Id, -CreatedUtc, -City, -PostalCode)
@@ -53,7 +52,7 @@ subcategories <- subcategories %>%
   select(-Id)
 ```
 
-```{r}
+```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Convert characters to numeric in client dataset
 clients$Age <- as.integer(clients$Age)
 clients$NumberInHousehold <- as.integer(clients$NumberInHousehold)
@@ -63,13 +62,13 @@ clients$CheckingBalance <- as.numeric(clients$CheckingBalance)
 clients$SavingsBalance <- as.numeric(clients$SavingsBalance)
 ```
 
-```{r}
+```{r eval= TRUE, include=FALSE, echo=FALSE}
 # rename columns to match other datasets
 questions <- questions %>%
   rename("ClientUno" = "AskedByClientUno", "AttorneyUno" = "TakenByAttorneyUno")
 ```
 
-```{r}
+```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Merge into two dataframes
 # df1 is all datasets except attorney and attorney_time
 df1 <- left_join(clients, questions, join_by("StateAbbr", "ClientUno")) %>% 
@@ -81,7 +80,7 @@ df1 <- left_join(clients, questions, join_by("StateAbbr", "ClientUno")) %>%
 df2 <- left_join(attorneys, attorneys_time, join_by("StateAbbr", "AttorneyUno")) 
 ```
 
-```{r}
+```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Select the independent variables we want to observe and Remove all NA
 data_overall <- df1 %>%
   select(StateAbbr, Age, NumberInHousehold, MaritalStatus, AnnualIncome, SavingsBalance, CheckingBalance, AllowedIncome, Category, Subcategory, ClientUno) %>%
@@ -92,9 +91,9 @@ data_overall <- df1 %>%
 data_overall <- data_overall %>%  filter(data_overall$MaritalStatus != "NULL")
 ```
 
+```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Change the subcategory to binary categorical data 
-Divorce mentioned entry is represented by 1, otherwise 0. 
-```{r}
+# Divorce mentioned entry is represented by 1, otherwise 0. 
 data_overall$Subcategory <- ifelse(str_detect(data_overall$Subcategory, "Divorce"), 1, 0)
 ```
 
@@ -117,7 +116,8 @@ Datasets:
    
    
 # Visualization 1: Investigating the Top 15 Subcategories of Asked Questions
-```{r}
+```{r eval= TRUE, include=TRUE, echo=TRUE}
+# Visualization 1
 top_subcats <- questions %>%
   group_by(Subcategory) %>%
   summarise(num_subcats = n()) %>%
@@ -133,7 +133,7 @@ ggplot(top_subcats, aes(x = num_subcats, y = reorder(Subcategory, num_subcats)))
        x = "Number of Clients",
        y = "Subcategory")
 ```
-Interpretation:
+Interpretation:  
   For our project, we want to started off with investigating the most frequently 
 asked legal questions subcategories so we can define a most common question type
 based on the data set we have at hand and use it as the theme of our research 
@@ -155,7 +155,8 @@ related questions?"
   
 
 # Visualization 2: US Map of Divorce Related Questions Distribution
-```{r}
+```{r eval= TRUE, include=TRUE, echo=TRUE}
+# Visualization 2
 # Create a data set with divorce related questions frequency per state
 contingency <- table(data_overall$StateAbbr,data_overall$Subcategory)
 divorce_distrib <- as.data.frame(contingency)
@@ -180,7 +181,8 @@ states. For example, states such as Texas and Florida has the highest frequency
 of divorce related questions discuss with the attorney on the online platform. 
 
 
-```{r}
+```{r eval= TRUE, include=TRUE, echo=TRUE}
+# Visualization 2
 # Create a data set with divorce related questions frequency per state
 contingency <- table(data_overall$StateAbbr,data_overall$Subcategory)
 divorce_distrib <- as.data.frame(contingency)
@@ -208,6 +210,8 @@ plot_usmap(data = dfDivorce, values = "distrib", color = "red") +
   theme(legend.position = "bottom") +
   labs(title = "US map plot of distribution of divorce related questions")
 ```
+
+
 This is might be better to look at the number of divorces per the population because as we'd expect, states with a large population would have more divorce related questions.
 
 Also a bit weird that state like California and Idaho don't have any divorce related questions. I think thats because when we filtered the subcategories, those states don't have any subcategories with "Divorce". I don't know how we'd account for that...
@@ -218,7 +222,10 @@ Also the project instructions say to use ggplot2 for our visualization. I find t
   
 # Visualization 3: Financial Status Correlation with Divorce Rate
 We need to use that facet, wrap, colored shit here. 
+<<<<<<< HEAD
 ```{r setup, include=TRUE}
+
+# Visualization 3
 
 # Get rid of outliers
 quartiles <- quantile(data_overall$AnnualIncome, probs=c(.25, .75), na.rm = FALSE)
@@ -292,23 +299,23 @@ ggplot(data = data_noOutlier, aes(x = AllowedIncome , y = MaritalStatus, fill
 
 #### Testing models
 
-We might need to remove the StateAbbr "US"???
+We might need to remove the StateAbbr "US"??? Billy: Prolly
 
-# Model 1: All independent variables used 
+
+# Model 1:All independent variables used 
 ```{r}
-
-```
-
-
-# Model 2
-```{r}
+# Model 1
 model1 <- glm(factor(Subcategory) ~ . -Category, data = data_overall, family = 'binomial')
 summary(model1)
-
-model2 <- glm(factor(Subcategory) ~ . -Category - StateAbbr, data = data_overall, family = 'binomial')
-summary(model2)
 ```
 Assumes that there is no severe multicollinearity
 Assume 
+
+
+# Model 2 
+```{r eval= TRUE, include=TRUE, echo=FALSE}
+model2 <- glm(factor(Subcategory) ~ . -Category - StateAbbr, data = data_overall, family = 'binomial')
+summary(model2)
+```
 
 
