@@ -312,10 +312,28 @@ Assumes that there is no severe multicollinearity
 Assume 
 
 
-# Model 2 
+# Model 2: Marital Status and Savings Balance influence on divorce related questions
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
-model2 <- glm(factor(Subcategory) ~ . -Category - StateAbbr, data = data_overall, family = 'binomial')
+model2 <- glm(factor(Subcategory) ~ factor(MaritalStatus) + SavingsBalance ,
+              data = data_overall, family = 'binomial')
 summary(model2)
 ```
 
 
+# Model 3: 
+```{r eval= TRUE, include=TRUE, echo=FALSE}
+model3 <- glm(factor(Subcategory) ~ SavingsBalance + CheckingBalance + 
+              factor(MaritalStatus) + NumberInHousehold , data = data_overall,
+              family = 'binomial')
+summary(model3)
+```
+Comment by Billy:
+- The AIC is alarmingly high
+- Some assumptions to consider for our model
+  - observations are independent
+  - no sever multicollinearity aamong explanatory variables, no highly correlated
+    variables
+  - no extreme outliers
+  - exist linear relationship between explanatory variable and logit of response
+    linearly related to log odds
+  - Large sample set
