@@ -167,15 +167,9 @@ divorce_plot <- divorce_distrib[divorce_distrib$Var2 != 0, ]
 plot_usmap(data = divorce_plot, values = "Freq", color = "red") + 
   scale_fill_continuous(
     low = "white", high = "red", name = "Frequency of Divorce Related Questions"
-<<<<<<< HEAD
-    , label = scales::comma
-  ) + theme(legend.position = "right") 
-
-=======
     , label = scales::comma) + 
   theme(legend.position = "right") +
   labs(title = "US map plot of distribution of divorce rate")
->>>>>>> origin/main
 ```
   Certain States such as: Washington, Oregon, Nevada, Montana, Colorado, 
 Minnesota, Ohio, and Kentucky are shown in gray because out of confidentiality 
@@ -222,41 +216,73 @@ Also the project instructions say to use ggplot2 for our visualization. I find t
 
   
   
- Test 
-  
 # Visualization 3: Financial Status Correlation with Divorce Rate
 We need to use that facet, wrap, colored shit here. 
-<<<<<<< HEAD
 ```{r setup, include=TRUE}
 
-=======
-```{r}
->>>>>>> origin/main
 # Get rid of outliers
 quartiles <- quantile(data_overall$AnnualIncome, probs=c(.25, .75), na.rm = FALSE)
 IQR <- IQR(data_overall$AnnualIncome)
 Lower <- quartiles[1] - 1.5*IQR
 Upper <- quartiles[2] + 1.5*IQR
-<<<<<<< HEAD
+
+# Investigating the correlation between 
 data_noOutlier <- subset(data_overall, AnnualIncome > Lower & AnnualIncome < Upper)
 
-data_noOutlier %>% 
-ggplot(aes(x = Subcategory , y = AnnualIncome)) +
-  geom_point() +
-  labs(x = " AnnualIncome",
-       y = "Divorce Questions Mentioned",
-       title = "Average Complexity VS Average Rating") +
-  facet_wrap(~MaritalStatus) +
-=======
-data_noOutlier <- subset(data_overall, AnnualIncome > Lower & AnnualIncome < Upper & AnnualIncome > 0)
-
-ggplot(data = data_noOutlier, aes(x = AnnualIncome , y = MaritalStatus)) +
-  geom_point() +
+#   Bar charts of median annual income level of people of various marital status
+#   Faceted by subcategory 
+ggplot(data = data_noOutlier, aes(x = AnnualIncome , y = MaritalStatus, fill 
+                                  = MaritalStatus)) +
+  stat_summary(geom = "bar", fun.y = "median") +
   labs(x = " AnnualIncome",
        y = "Divorce related Questions Mentioned",
-       title = "Divorce related questions analysis with Client Annual Income and Marital Status") +
+       title = "Divorce related questions analysis with Client Annual Income and 
+       Marital Status") +
   facet_wrap(~ Subcategory) +
->>>>>>> origin/main
+  theme_bw(base_size = 10) +
+  theme(plot.title =
+          element_text(hjust = 0.5))
+
+
+#   Bar charts of median savings balance level of people of various marital status
+#   Faceted by subcategory 
+ggplot(data = data_noOutlier, aes(x = SavingsBalance , y = MaritalStatus, fill 
+                                  = MaritalStatus)) +
+  stat_summary(geom = "bar", fun.y = "median") +
+  labs(x = "Savings Balance",
+       y = "Divorce related Questions Mentioned",
+       title = "Divorce related questions analysis with Client Savings Balance and 
+       Marital Status") +
+  facet_wrap(~ Subcategory) +
+  theme_bw(base_size = 10) +
+  theme(plot.title =
+          element_text(hjust = 0.5))
+
+
+#   Bar charts of median checking balance level of people of various marital status
+#   Faceted by subcategory 
+ggplot(data = data_noOutlier, aes(x = CheckingBalance , y = MaritalStatus, fill 
+                                  = MaritalStatus)) +
+  stat_summary(geom = "bar", fun.y = "median") +
+  labs(x = " Checking Balance",
+       y = "Divorce related Questions Mentioned",
+       title = "Divorce related questions analysis with Client Checking Balance and 
+       Marital Status") +
+  facet_wrap(~ Subcategory) +
+  theme_bw(base_size = 10) +
+  theme(plot.title =
+          element_text(hjust = 0.5))
+
+#   Bar charts of median checking balance level of people of various marital status
+#   Faceted by subcategory 
+ggplot(data = data_noOutlier, aes(x = AllowedIncome , y = MaritalStatus, fill 
+                                  = MaritalStatus)) +
+  stat_summary(geom = "bar", fun.y = "median") +
+  labs(x = " Allowed Income",
+       y = "Divorce related Questions Mentioned",
+       title = "Divorce related questions analysis with Client Allowed Income and 
+       Marital Status") +
+  facet_wrap(~ Subcategory) +
   theme_bw(base_size = 10) +
   theme(plot.title =
           element_text(hjust = 0.5))
@@ -268,9 +294,14 @@ ggplot(data = data_noOutlier, aes(x = AnnualIncome , y = MaritalStatus)) +
 
 We might need to remove the StateAbbr "US"???
 
-# Model 1
+# Model 1: All independent variables used 
 ```{r}
 
+```
+
+
+# Model 2
+```{r}
 model1 <- glm(factor(Subcategory) ~ . -Category, data = data_overall, family = 'binomial')
 summary(model1)
 
@@ -280,4 +311,4 @@ summary(model2)
 Assumes that there is no severe multicollinearity
 Assume 
 
-# Model 2 
+
