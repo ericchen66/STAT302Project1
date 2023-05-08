@@ -11,12 +11,10 @@ library(ggplot2)
 library(dplyr)
 library(splitstackshape)
 library(readr)
-
 library(car)
 library(lmtest)
 library(rcompanion)
 library(olsrr)
-
 library(maps)
 library(usmap)
 ```
@@ -39,25 +37,18 @@ subcategories <- read.csv("subcategories.csv")
 # Remove unwanted columns for all datasets
 attorneys <- attorneys %>%
   select(-Id, -CreatedUtc, -City, -PostalCode)
-
 attorneys_time <- attorneys_time %>%
   select(-Id, -EnteredOnUtc, -TimeEntryUno)
-
 categories <- categories %>%
   select(-Id)
-
 clients <- clients %>%
   select(-Id, -PostalCode, -CreatedUtc, -InvestmentsBalance)
-
 questionposts <- questionposts %>%
   select(-Id, -CreatedUtc)
-
 questions <- questions %>%
   select(-Id, -AskedOnUtc, -TakenOnUtc, -ClosedOnUtc, -LegalDeadline, -ClosedByAttorneyUno)
-
 statesites <- statesites %>%
   select(-Id)
-
 subcategories <- subcategories %>%
   select(-Id)
 ```
@@ -80,28 +71,23 @@ questions <- questions %>%
 
 ```{r}
 # Merge into two dataframes
-
 # df1 is all datasets except attorney and attorney_time
 df1 <- left_join(clients, questions, join_by("StateAbbr", "ClientUno")) %>% 
   left_join(., categories, join_by("StateAbbr", "CategoryUno", "Category")) %>%
   left_join(.,subcategories, join_by("StateAbbr", "CategoryUno", "Subcategory", "SubcategoryUno")) %>%
   left_join(., questionposts, join_by("StateAbbr", "QuestionUno")) %>%
   left_join(., statesites, join_by("StateAbbr", "StateName"))
-
 # df2 is the two attorney datasets
 df2 <- left_join(attorneys, attorneys_time, join_by("StateAbbr", "AttorneyUno")) 
 ```
 
 ```{r}
-# Select the independent variables we want to observe
-# Remove all NA
-
+# Select the independent variables we want to observe and Remove all NA
 data_overall <- df1 %>%
   select(StateAbbr, Age, NumberInHousehold, MaritalStatus, AnnualIncome, SavingsBalance, CheckingBalance, AllowedIncome, Category, Subcategory, ClientUno) %>%
   distinct(ClientUno, .keep_all = TRUE) %>%
   select(-ClientUno) %>%
   na.omit(df1)
-
 # Remove all NUll from the MaritalStatus variable 
 data_overall <- data_overall %>%  filter(data_overall$MaritalStatus != "NULL")
 ```
@@ -136,11 +122,9 @@ top_subcats <- questions %>%
   group_by(Subcategory) %>%
   summarise(num_subcats = n()) %>%
   ungroup()
-
 top_subcats <- top_subcats %>%
   arrange(desc(num_subcats)) %>%
   head(15)
-
 ggplot(top_subcats, aes(x = num_subcats, y = reorder(Subcategory, num_subcats))) +
   geom_bar(stat = "Identity", fill = "#00A19B") +
   theme_minimal() +
@@ -148,7 +132,6 @@ ggplot(top_subcats, aes(x = num_subcats, y = reorder(Subcategory, num_subcats)))
   labs(title = "Top 15 Subcategories",
        x = "Number of Clients",
        y = "Subcategory")
-
 ```
 Interpretation:
   For our project, we want to started off with investigating the most frequently 
@@ -172,22 +155,27 @@ related questions?"
   
 
 # Visualization 2: US Map of Divorce Related Questions Distribution
-```{r setup, include=TRUE}
+```{r}
 # Create a data set with divorce related questions frequency per state
 contingency <- table(data_overall$StateAbbr,data_overall$Subcategory)
 divorce_distrib <- as.data.frame(contingency)
-divorce_distrib[divorce_distrib$Var2 != 0, ]  
-
 # Change the column name var1 to state, so we can use plot_usmap
 colnames(divorce_distrib)[which(names(divorce_distrib) == "Var1")] <- "state"
-
-# state_divorce <- 
-plot_usmap(data = divorce_distrib, values = "Freq", color = "red", labels = TRUE) + 
+# Selects the number of divorces per state
+divorce_plot <- divorce_distrib[divorce_distrib$Var2 != 0, ]  
+# Plots the distribution of divorces in each state
+plot_usmap(data = divorce_plot, values = "Freq", color = "red") + 
   scale_fill_continuous(
     low = "white", high = "red", name = "Frequency of Divorce Related Questions"
+<<<<<<< HEAD
     , label = scales::comma
   ) + theme(legend.position = "right") 
 
+=======
+    , label = scales::comma) + 
+  theme(legend.position = "right") +
+  labs(title = "US map plot of distribution of divorce rate")
+>>>>>>> origin/main
 ```
   Certain States such as: Washington, Oregon, Nevada, Montana, Colorado, 
 Minnesota, Ohio, and Kentucky are shown in gray because out of confidentiality 
@@ -198,17 +186,58 @@ states. For example, states such as Texas and Florida has the highest frequency
 of divorce related questions discuss with the attorney on the online platform. 
 
 
+```{r}
+# Create a data set with divorce related questions frequency per state
+contingency <- table(data_overall$StateAbbr,data_overall$Subcategory)
+divorce_distrib <- as.data.frame(contingency)
+# Change the column name var1 to state, so we can use plot_usmap
+colnames(divorce_distrib)[which(names(divorce_distrib) == "Var1")] <- "state"
+# Selects the number of divorces per state
+divorce_plot <- divorce_distrib[divorce_distrib$Var2 != 0, ] 
+# Changes state variable back to charcter
+divorce_plot$state <- as.character(divorce_plot$state)
+# Retrieve state populations and rename abbr column to state
+states_pop <- statepop
+states_pop <- states_pop %>%
+  rename("state" = "abbr")
+# Merge the population data with divorce data
+dfDivorce <- left_join(states_pop, divorce_plot, join_by("state")) %>%
+  select(-fips, -full) %>%
+  mutate(distrib = ((Freq/pop_2015)*100000)) %>%
+  select(-Freq, -pop_2015)
+# Plots the distribution of divorces in each state per population
+plot_usmap(data = dfDivorce, values = "distrib", color = "red") + 
+  scale_fill_continuous(
+    low = "white", high = "red", name = 
+      "Divorce Related Questions per 100,000 people"
+    , label = scales::comma) + 
+  theme(legend.position = "bottom") +
+  labs(title = "US map plot of distribution of divorce related questions")
+```
+This is might be better to look at the number of divorces per the population because as we'd expect, states with a large population would have more divorce related questions.
 
+Also a bit weird that state like California and Idaho don't have any divorce related questions. I think thats because when we filtered the subcategories, those states don't have any subcategories with "Divorce". I don't know how we'd account for that...
+
+Also the project instructions say to use ggplot2 for our visualization. I find that plot_usmap is its own package so should we try to create a us map plot using ggplot2?
+
+  
+  
+ Test 
   
 # Visualization 3: Financial Status Correlation with Divorce Rate
 We need to use that facet, wrap, colored shit here. 
+<<<<<<< HEAD
 ```{r setup, include=TRUE}
 
+=======
+```{r}
+>>>>>>> origin/main
 # Get rid of outliers
 quartiles <- quantile(data_overall$AnnualIncome, probs=c(.25, .75), na.rm = FALSE)
 IQR <- IQR(data_overall$AnnualIncome)
 Lower <- quartiles[1] - 1.5*IQR
 Upper <- quartiles[2] + 1.5*IQR
+<<<<<<< HEAD
 data_noOutlier <- subset(data_overall, AnnualIncome > Lower & AnnualIncome < Upper)
 
 data_noOutlier %>% 
@@ -218,6 +247,16 @@ ggplot(aes(x = Subcategory , y = AnnualIncome)) +
        y = "Divorce Questions Mentioned",
        title = "Average Complexity VS Average Rating") +
   facet_wrap(~MaritalStatus) +
+=======
+data_noOutlier <- subset(data_overall, AnnualIncome > Lower & AnnualIncome < Upper & AnnualIncome > 0)
+
+ggplot(data = data_noOutlier, aes(x = AnnualIncome , y = MaritalStatus)) +
+  geom_point() +
+  labs(x = " AnnualIncome",
+       y = "Divorce related Questions Mentioned",
+       title = "Divorce related questions analysis with Client Annual Income and Marital Status") +
+  facet_wrap(~ Subcategory) +
+>>>>>>> origin/main
   theme_bw(base_size = 10) +
   theme(plot.title =
           element_text(hjust = 0.5))
@@ -227,15 +266,16 @@ ggplot(aes(x = Subcategory , y = AnnualIncome)) +
 
 #### Testing models
 
-```{r}
-data_overall$Subcategory <- ifelse(str_detect(data_overall$Subcategory, "Divorce"), 1, 0)
-```
+We might need to remove the StateAbbr "US"???
 
 # Model 1
 ```{r}
 
-model <- glm(factor(Subcategory) ~ . -Category -StateAbbr, data = data_overall, family = 'binomial')
-summary(model)
+model1 <- glm(factor(Subcategory) ~ . -Category, data = data_overall, family = 'binomial')
+summary(model1)
+
+model2 <- glm(factor(Subcategory) ~ . -Category - StateAbbr, data = data_overall, family = 'binomial')
+summary(model2)
 ```
 Assumes that there is no severe multicollinearity
 Assume 
