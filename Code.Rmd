@@ -215,7 +215,7 @@ Also the project instructions say to use ggplot2 for our visualization. I find t
 
   
   
-  
+ Test 
   
 # Visualization 3: Financial Status Correlation with Divorce Rate
 We need to use that facet, wrap, colored shit here. 
