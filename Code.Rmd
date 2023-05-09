@@ -222,7 +222,6 @@ Also the project instructions say to use ggplot2 for our visualization. I find t
   
 # Visualization 3: Financial Status Correlation with Divorce Rate
 We need to use that facet, wrap, colored shit here. 
-<<<<<<< HEAD
 ```{r setup, include=TRUE}
 
 # Visualization 3
@@ -340,9 +339,39 @@ summary(model3)
 
 # Model 4:
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
-model3 <- glm(Subcategory ~ AllowedIncome, data = data_overall,
+model4 <- glm(Subcategory ~ AllowedIncome, data = data_overall,
               family = 'binomial')
-summary(model3)
+summary(model4)
+```
+
+# Model 5: Are just the states good predictors?
+
+```{r eval= TRUE, include=TRUE, echo=FALSE}
+model5 <- glm(factor(Subcategory) ~ factor(StateAbbr) , data = data_overall,
+              family = 'binomial')
+summary(model5)
+```
+
+# Model comparison
+
+```{r}
+compareGLM(model1, model2, model3, model4, model5)
+```
+
+It appears that our model 1 is the most accurate since it has the lowest AIC.
+
+
+# Model Accuracy
+
+```{r}
+acc_table <- table(factor(data_overall$Subcategory), predict(model1)>0)
+acc_table
+```
+
+
+```{r}
+accuracy <- ((acc_table[1] + acc_table[4])/sum(acc_table))*100
+print(paste0("The accuracy of our optimum model was: ", round(accuracy, 2), "%."))
 ```
 
 
