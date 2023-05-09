@@ -331,7 +331,7 @@ summary(model2)
 
 # Model 3: 
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
-model3 <- glm(Subcategory ~ SavingsBalance + CheckingBalance + 
+model3 <- glm(factor(Subcategory) ~ SavingsBalance + CheckingBalance + 
               factor(MaritalStatus) + NumberInHousehold , data = data_overall,
               family = 'binomial')
 summary(model3)
@@ -339,7 +339,7 @@ summary(model3)
 
 # Model 4:
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
-model4 <- glm(Subcategory ~ AllowedIncome, data = data_overall,
+model4 <- glm(factor(Subcategory) ~ AllowedIncome, data = data_overall,
               family = 'binomial')
 summary(model4)
 ```
