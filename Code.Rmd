@@ -320,12 +320,25 @@ chisq.test(data_overall$Subcategory, data_overall$CheckingBalance)
 chisq.test(data_overall$Subcategory, data_overall$AllowedIncome)
 ```
 
-
 # Model 2: Marital Status and Savings Balance influence on divorce related questions
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
-model2 <- glm(factor(Subcategory) ~ factor(MaritalStatus) + SavingsBalance ,
+model2 <- glm(Subcategory ~ factor(MaritalStatus) + SavingsBalance ,
               data = data_overall, family = 'binomial')
 summary(model2)
+
+par(mfrow = c(2, 2))
+plot(model2)
+vif(model2) 
+```
+
+
+# Model 2 Residuals  
+```{r eval= TRUE, include=TRUE, echo=FALSE}
+model2 <- glm(Subcategory ~ factor(MaritalStatus) + SavingsBalance ,
+              data = data_overall, family = 'binomial')
+summary(model2)
+
+vif(model2) 
 ```
 
 
@@ -386,3 +399,5 @@ Comment by Billy:
   - exist linear relationship between explanatory variable and logit of response
     linearly related to log odds
   - Large sample set
+  - Remove outliers
+  - Remove independent variables with collinealarity
