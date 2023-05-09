@@ -302,6 +302,7 @@ ggplot(data = data_noOutlier, aes(x = AllowedIncome , y = MaritalStatus, fill
 We might need to remove the StateAbbr "US"??? Billy: Prolly
 
 
+
 # Model 1:All independent variables used 
 ```{r}
 # Model 1
@@ -310,6 +311,15 @@ summary(model1)
 ```
 Assumes that there is no severe multicollinearity
 Assume 
+
+# Chisqtest 
+For  
+```{r eval= TRUE, include=TRUE, echo=FALSE}
+chisq.test(data_overall$Subcategory, data_overall$SavingsBalance)
+chisq.test(data_overall$Subcategory, data_overall$AnnualIncome)
+chisq.test(data_overall$Subcategory, data_overall$CheckingBalance)
+chisq.test(data_overall$Subcategory, data_overall$AllowedIncome)
+```
 
 
 # Model 2: Marital Status and Savings Balance influence on divorce related questions
@@ -322,11 +332,21 @@ summary(model2)
 
 # Model 3: 
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
-model3 <- glm(factor(Subcategory) ~ SavingsBalance + CheckingBalance + 
+model3 <- glm(Subcategory ~ SavingsBalance + CheckingBalance + 
               factor(MaritalStatus) + NumberInHousehold , data = data_overall,
               family = 'binomial')
 summary(model3)
 ```
+
+# Model 4:
+```{r eval= TRUE, include=TRUE, echo=FALSE}
+model3 <- glm(Subcategory ~ AllowedIncome, data = data_overall,
+              family = 'binomial')
+summary(model3)
+```
+
+
+
 Comment by Billy:
 - The AIC is alarmingly high
 - Some assumptions to consider for our model
