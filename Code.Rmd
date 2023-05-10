@@ -98,24 +98,8 @@ data_overall$Subcategory <- ifelse(str_detect(data_overall$Subcategory, "Divorce
 ```
 
 
-Datasets: 
-  - Statesites
-    - StateAbbr
-    - AllowedAssets
-    - BaseIncomeLimit
-    - PerHouseholdMemberIncomeLimit
-    - IncomeMultiplier 
-  - Client
-    - StateAbbr
-    - Prettymuch the entire dataset 
-  - Categories
-    - Category: Family and Children 
-   -nSubcategories: everything related to divorces
-   
-   
-   
-   
 # Visualization 1: Investigating the Top 15 Subcategories of Asked Questions
+
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 # Visualization 1
 top_subcats <- questions %>%
@@ -134,27 +118,15 @@ ggplot(top_subcats, aes(x = num_subcats, y = reorder(Subcategory, num_subcats)))
        y = "Subcategory")
 ```
 Interpretation:  
-  For our project, we want to started off with investigating the most frequently 
-asked legal questions subcategories so we can define a most common question type
-based on the data set we have at hand and use it as the theme of our research 
-question. 
+  For our project, we want to started off with investigating the most frequently asked legal questions subcategories so we can define a most common question type based on the data set we have at hand and use it as the theme of our research question. 
 
-  Based on our side way bar chart, it is clear to see that out of the top 15 
-subcategories, among the top three categories of questions asked by clients on 
-the online platform, two of them are related to divorce.The question of subcategory 
-Family/Divorce/Custody has the highest frequency among the top 15, and it has been
-asked by almost twice as many clients than the second subcategory of others, which
-is showing that the divorce related questions should be treated with more 
-preparation when it comes to training volunteers.  
+  Based on our side way bar chart, it is clear to see that out of the top 15 subcategories, among the top three categories of questions asked by clients on the online platform, two of them are related to divorce.The question of subcategory Family/Divorce/Custody has the highest frequency among the top 15, and it has been asked by almost twice as many clients than the second subcategory of others, which is showing that the divorce related questions should be treated with more preparation when it comes to training volunteers.  
 
-  This is intriguing to us as it begs for answers to the questions such as 
-"What are the major determinants of divorce?","Does the clients' backgrounds
-affect their tendency to ask divorce related question on the ABA online platform?"
-,and most importantly, "How do we prepare our volunteers to address these divorce
-related questions?"
+  This is intriguing to us as it begs for answers to the questions such as: "What are the major determinants of divorce?","Do the clients' backgrounds affect their tendency to ask divorce related question on the ABA online platform?", and most importantly, "How do we prepare our volunteers to address these divorce related questions?"
   
 
 # Visualization 2: US Map of Divorce Related Questions Distribution
+
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 # Visualization 2
 # Create a data set with divorce related questions frequency per state
@@ -211,18 +183,9 @@ plot_usmap(data = dfDivorce, values = "distrib", color = "red") +
   labs(title = "US map plot of distribution of divorce related questions")
 ```
 
-
-This is might be better to look at the number of divorces per the population because as we'd expect, states with a large population would have more divorce related questions.
-
-Also a bit weird that state like California and Idaho don't have any divorce related questions. I think thats because when we filtered the subcategories, those states don't have any subcategories with "Divorce". I don't know how we'd account for that...
-
-Also the project instructions say to use ggplot2 for our visualization. I find that plot_usmap is its own package so should we try to create a us map plot using ggplot2?
-
-  
-  
 # Visualization 3: Financial Status Correlation with Divorce Rate
-We need to use that facet, wrap, colored shit here. 
-```{r eval= TRUE, include=TRUE, echo=FALSE}
+
+```{r eval= TRUE, include=TRUE, echo=FALSE, warning = FALSE, message=FALSE}
 
 # Visualization 3
 
@@ -295,33 +258,24 @@ ggplot(data = data_noOutlier, aes(x = AllowedIncome , y = MaritalStatus, fill
 ```
 
 
-
-#### Testing models
-
-We might need to remove the StateAbbr "US"??? Billy: Prolly
-
-
-
-# Model 1:All independent variables used 
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
-# Model 1
+# Model 1:All independent variables used 
 model1 <- glm(factor(Subcategory) ~ . -Category, data = data_overall, family = 'binomial')
 summary(model1)
 ```
-Assumes that there is no severe multicollinearity
-Assume 
 
-# Chisqtest 
-For  
+
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
+# Chisqtest 
 chisq.test(data_overall$Subcategory, data_overall$SavingsBalance)
 chisq.test(data_overall$Subcategory, data_overall$AnnualIncome)
 chisq.test(data_overall$Subcategory, data_overall$CheckingBalance)
 chisq.test(data_overall$Subcategory, data_overall$AllowedIncome)
 ```
 
-# Model 2: Marital Status and Savings Balance influence on divorce related questions
+
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
+# Model 2: Marital Status and Savings Balance influence on divorce related questions
 model2 <- glm(Subcategory ~ factor(MaritalStatus) + SavingsBalance ,
               data = data_overall, family = 'binomial')
 summary(model2)
@@ -331,9 +285,8 @@ plot(model2)
 vif(model2) 
 ```
 
-
-# Model 2 Residuals  
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
+# Model 2 Residuals  
 model2 <- glm(Subcategory ~ factor(MaritalStatus) + SavingsBalance ,
               data = data_overall, family = 'binomial')
 summary(model2)
@@ -341,59 +294,72 @@ summary(model2)
 vif(model2) 
 ```
 
-
-# Model 3: 
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
+# Model 3: 
 model3 <- glm(factor(Subcategory) ~ SavingsBalance + CheckingBalance + 
               factor(MaritalStatus) + NumberInHousehold , data = data_overall,
               family = 'binomial')
 summary(model3)
 ```
 
-# Model 4:
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
+# Model 4:
 model4 <- glm(factor(Subcategory) ~ AllowedIncome, data = data_overall,
               family = 'binomial')
 summary(model4)
 ```
 
-# Model 5: Are just the states good predictors?
-
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
+# Model 5: Are just the states good predictors?
 model5 <- glm(factor(Subcategory) ~ factor(StateAbbr) , data = data_overall,
               family = 'binomial')
 summary(model5)
 ```
 
+```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Model comparison
-
-```{r eval= TRUE, include=TRUE, echo=FALSE}
-compareGLM(model1, model2, model3, model4, model5)
+model_comparison <- compareGLM(model1, model2, model3, model4, model5)
 ```
 
-It appears that our model 1 is the most accurate since it has the lowest AIC.
+```{r eval= TRUE, include=TRUE, echo=FALSE}
+model_comparison[1]
+model_comparison[2]
+```
 
 
 # Model Accuracy
 
-```{r eval= TRUE, include=FALSE, echo=FALSE}
+```{r eval= TRUE, include=TRUE, echo=FALSE}
+# Accuracy Table
 acc_table <- table(factor(data_overall$Subcategory), predict(model1)>0)
 acc_table
 ```
 
 
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
+# % Accuracy
 accuracy <- ((acc_table[1] + acc_table[4])/sum(acc_table))*100
 print(paste0("The accuracy of our optimum model was: ", round(accuracy, 2), "%."))
 ```
 
+# COMMENTS
 
+Daniel: 
+- It appears that our model 1 is the most accurate since it has the lowest AIC.
+- I think we can only use 1 model for viz 2 and viz 3, otherwise our pdf page count is more than 8 pages.
+- For viz 2, it might be better to look at the number of divorces per the population because as we'd expect, states with a large population would have more divorce related questions.
+
+- Also a bit weird that state like California and Idaho don't have any divorce related questions. I think thats because when we filtered the subcategories, those states don't have any subcategories with "Divorce". I don't know how we'd account for that... but we might need to so Prince doesn't mark us off.
+
+Daniel: 
+- We might need to remove the StateAbbr "US"??? Billy: Prolly
+- Actually we might not need to remove StateAbbr "US". Looking at the instructions PDF, is says that the "US" is a category for immigrants and veterans. So while its not a state in itself, still might be important to keep??
 
 Comment by Billy:
 - The AIC is alarmingly high
 - Some assumptions to consider for our model
   - observations are independent
-  - no sever multicollinearity aamong explanatory variables, no highly correlated
+  - no severe multicollinearity among explanatory variables, no highly correlated
     variables
   - no extreme outliers
   - exist linear relationship between explanatory variable and logit of response
@@ -401,3 +367,18 @@ Comment by Billy:
   - Large sample set
   - Remove outliers
   - Remove independent variables with collinealarity
+  
+
+Datasets: 
+  - Statesites
+    - StateAbbr
+    - AllowedAssets
+    - BaseIncomeLimit
+    - PerHouseholdMemberIncomeLimit
+    - IncomeMultiplier 
+  - Client
+    - StateAbbr
+    - Prettymuch the entire dataset 
+  - Categories
+    - Category: Family and Children 
+   -nSubcategories: everything related to divorces
