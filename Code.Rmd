@@ -139,18 +139,18 @@ divorce_plot <- divorce_distrib[divorce_distrib$Var2 != 0, ]
 # Plots the distribution of divorces in each state
 plot_usmap(data = divorce_plot, values = "Freq", color = "red") + 
   scale_fill_continuous(
-    low = "white", high = "red", name = "Frequency of Divorce Related Questions"
+    low = "white", high = "red", name = "Number of Divorce Related Questions"
     , label = scales::comma) + 
   theme(legend.position = "right") +
-  labs(title = "US map plot of distribution of divorce rate")
+  labs(title = "US map plot of divorce-related questions")
 ```
   Certain States such as: Washington, Oregon, Nevada, Montana, Colorado, 
 Minnesota, Ohio, and Kentucky are shown in gray because out of confidentiality 
 and per state law, they are not allowed to provided clients' information. 
 
-  However, the distribution of the divorce questions frequency does varied by 
-states. For example, states such as Texas and Florida has the highest frequency
-of divorce related questions discuss with the attorney on the online platform. 
+  However, the distribution of the divorce questions frequency does vary by 
+state. For example, states such as Texas and Florida have the highest frequency
+of divorce related questions discussed with the attorney on the online platform. 
 
 
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
@@ -180,7 +180,7 @@ plot_usmap(data = dfDivorce, values = "distrib", color = "red") +
       "Divorce Related Questions per 100,000 people"
     , label = scales::comma) + 
   theme(legend.position = "bottom") +
-  labs(title = "US map plot of distribution of divorce related questions")
+  labs(title = "US map plot of frequency of divorce related questions")
 ```
 
 # Visualization 3: Financial Status Correlation with Divorce Rate
@@ -198,19 +198,23 @@ Upper <- quartiles[2] + 1.5*IQR
 # Investigating the correlation between 
 data_noOutlier <- subset(data_overall, AnnualIncome > Lower & AnnualIncome < Upper)
 
+# Create facet titles
+Subcategory.labs <- c("Divorce", "Other")
+names(Subcategory.labs) <- c("1", "0")
+
 #   Bar charts of median annual income level of people of various marital status
 #   Faceted by subcategory 
 ggplot(data = data_noOutlier, aes(x = AnnualIncome , y = MaritalStatus, fill 
                                   = MaritalStatus)) +
   stat_summary(geom = "bar", fun.y = "median") +
-  labs(x = " AnnualIncome",
-       y = "Divorce related Questions Mentioned",
-       title = "Divorce related questions analysis with Client Annual Income and 
-       Marital Status") +
-  facet_wrap(~ Subcategory) +
+  labs(x = "Annual Income",
+       y = "Marital Status",
+       title = "Client Marital Status and Annual Income, 
+       Split by Divorce Related Questions/Other Questions") +
+  facet_wrap(~ Subcategory, labeller = labeller(Subcategory = Subcategory.labs)) +
   theme_bw(base_size = 10) +
   theme(plot.title =
-          element_text(hjust = 0.5))
+          element_text(hjust = 0.5), legend.position = "none")
 
 
 #   Bar charts of median savings balance level of people of various marital status
@@ -219,13 +223,13 @@ ggplot(data = data_noOutlier, aes(x = SavingsBalance , y = MaritalStatus, fill
                                   = MaritalStatus)) +
   stat_summary(geom = "bar", fun.y = "median") +
   labs(x = "Savings Balance",
-       y = "Divorce related Questions Mentioned",
-       title = "Divorce related questions analysis with Client Savings Balance and 
-       Marital Status") +
-  facet_wrap(~ Subcategory) +
+       y = "Marital Status",
+       title = "Client Marital Status and Savings Balance, 
+       Split by Divorce Related Questions/Other Questions") +
+  facet_wrap(~ Subcategory, labeller = labeller(Subcategory = Subcategory.labs)) +
   theme_bw(base_size = 10) +
   theme(plot.title =
-          element_text(hjust = 0.5))
+          element_text(hjust = 0.5), legend.position = "none")
 
 
 #   Bar charts of median checking balance level of people of various marital status
@@ -233,28 +237,28 @@ ggplot(data = data_noOutlier, aes(x = SavingsBalance , y = MaritalStatus, fill
 ggplot(data = data_noOutlier, aes(x = CheckingBalance , y = MaritalStatus, fill 
                                   = MaritalStatus)) +
   stat_summary(geom = "bar", fun.y = "median") +
-  labs(x = " Checking Balance",
-       y = "Divorce related Questions Mentioned",
-       title = "Divorce related questions analysis with Client Checking Balance and 
-       Marital Status") +
-  facet_wrap(~ Subcategory) +
+  labs(x = "Checking Balance",
+       y = "Marital Status",
+       title = "Client Marital Status and Checking Balance, 
+       Split by Divorce Related Questions/Other Questions") +
+  facet_wrap(~ Subcategory, labeller = labeller(Subcategory = Subcategory.labs)) +
   theme_bw(base_size = 10) +
   theme(plot.title =
-          element_text(hjust = 0.5))
+          element_text(hjust = 0.5), legend.position = "none")
 
 #   Bar charts of median checking balance level of people of various marital status
 #   Faceted by subcategory 
 ggplot(data = data_noOutlier, aes(x = AllowedIncome , y = MaritalStatus, fill 
                                   = MaritalStatus)) +
   stat_summary(geom = "bar", fun.y = "median") +
-  labs(x = " Allowed Income",
-       y = "Divorce related Questions Mentioned",
-       title = "Divorce related questions analysis with Client Allowed Income and 
-       Marital Status") +
-  facet_wrap(~ Subcategory) +
+  labs(x = "Allowed Income",
+       y = "Marital Status",
+       title = "Client Marital Status and Allowed Income, 
+       Split by Divorce Related Questions/Other Questions") +
+  facet_wrap(~ Subcategory, labeller = labeller(Subcategory = Subcategory.labs)) +
   theme_bw(base_size = 10) +
   theme(plot.title =
-          element_text(hjust = 0.5))
+          element_text(hjust = 0.5), legend.position = "none")
 ```
 
 
