@@ -116,7 +116,7 @@ Datasets:
    
    
 # Visualization 1: Investigating the Top 15 Subcategories of Asked Questions
-```{r eval= TRUE, include=TRUE, echo=TRUE}
+```{r eval= TRUE, include=TRUE, echo=FALSE}
 # Visualization 1
 top_subcats <- questions %>%
   group_by(Subcategory) %>%
@@ -155,7 +155,7 @@ related questions?"
   
 
 # Visualization 2: US Map of Divorce Related Questions Distribution
-```{r eval= TRUE, include=TRUE, echo=TRUE}
+```{r eval= TRUE, include=TRUE, echo=FALSE}
 # Visualization 2
 # Create a data set with divorce related questions frequency per state
 contingency <- table(data_overall$StateAbbr,data_overall$Subcategory)
@@ -181,7 +181,7 @@ states. For example, states such as Texas and Florida has the highest frequency
 of divorce related questions discuss with the attorney on the online platform. 
 
 
-```{r eval= TRUE, include=TRUE, echo=TRUE}
+```{r eval= TRUE, include=TRUE, echo=FALSE}
 # Visualization 2
 # Create a data set with divorce related questions frequency per state
 contingency <- table(data_overall$StateAbbr,data_overall$Subcategory)
@@ -222,7 +222,7 @@ Also the project instructions say to use ggplot2 for our visualization. I find t
   
 # Visualization 3: Financial Status Correlation with Divorce Rate
 We need to use that facet, wrap, colored shit here. 
-```{r setup, include=TRUE}
+```{r eval= TRUE, include=TRUE, echo=FALSE}
 
 # Visualization 3
 
@@ -303,7 +303,7 @@ We might need to remove the StateAbbr "US"??? Billy: Prolly
 
 
 # Model 1:All independent variables used 
-```{r}
+```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Model 1
 model1 <- glm(factor(Subcategory) ~ . -Category, data = data_overall, family = 'binomial')
 summary(model1)
@@ -313,7 +313,7 @@ Assume
 
 # Chisqtest 
 For  
-```{r eval= TRUE, include=TRUE, echo=FALSE}
+```{r eval= TRUE, include=FALSE, echo=FALSE}
 chisq.test(data_overall$Subcategory, data_overall$SavingsBalance)
 chisq.test(data_overall$Subcategory, data_overall$AnnualIncome)
 chisq.test(data_overall$Subcategory, data_overall$CheckingBalance)
@@ -321,7 +321,7 @@ chisq.test(data_overall$Subcategory, data_overall$AllowedIncome)
 ```
 
 # Model 2: Marital Status and Savings Balance influence on divorce related questions
-```{r eval= TRUE, include=TRUE, echo=FALSE}
+```{r eval= TRUE, include=FALSE, echo=FALSE}
 model2 <- glm(Subcategory ~ factor(MaritalStatus) + SavingsBalance ,
               data = data_overall, family = 'binomial')
 summary(model2)
@@ -333,7 +333,7 @@ vif(model2)
 
 
 # Model 2 Residuals  
-```{r eval= TRUE, include=TRUE, echo=FALSE}
+```{r eval= TRUE, include=FALSE, echo=FALSE}
 model2 <- glm(Subcategory ~ factor(MaritalStatus) + SavingsBalance ,
               data = data_overall, family = 'binomial')
 summary(model2)
@@ -343,7 +343,7 @@ vif(model2)
 
 
 # Model 3: 
-```{r eval= TRUE, include=TRUE, echo=FALSE}
+```{r eval= TRUE, include=FALSE, echo=FALSE}
 model3 <- glm(factor(Subcategory) ~ SavingsBalance + CheckingBalance + 
               factor(MaritalStatus) + NumberInHousehold , data = data_overall,
               family = 'binomial')
@@ -351,7 +351,7 @@ summary(model3)
 ```
 
 # Model 4:
-```{r eval= TRUE, include=TRUE, echo=FALSE}
+```{r eval= TRUE, include=FALSE, echo=FALSE}
 model4 <- glm(factor(Subcategory) ~ AllowedIncome, data = data_overall,
               family = 'binomial')
 summary(model4)
@@ -359,7 +359,7 @@ summary(model4)
 
 # Model 5: Are just the states good predictors?
 
-```{r eval= TRUE, include=TRUE, echo=FALSE}
+```{r eval= TRUE, include=FALSE, echo=FALSE}
 model5 <- glm(factor(Subcategory) ~ factor(StateAbbr) , data = data_overall,
               family = 'binomial')
 summary(model5)
@@ -367,7 +367,7 @@ summary(model5)
 
 # Model comparison
 
-```{r}
+```{r eval= TRUE, include=TRUE, echo=FALSE}
 compareGLM(model1, model2, model3, model4, model5)
 ```
 
@@ -376,13 +376,13 @@ It appears that our model 1 is the most accurate since it has the lowest AIC.
 
 # Model Accuracy
 
-```{r}
+```{r eval= TRUE, include=FALSE, echo=FALSE}
 acc_table <- table(factor(data_overall$Subcategory), predict(model1)>0)
 acc_table
 ```
 
 
-```{r}
+```{r eval= TRUE, include=TRUE, echo=FALSE}
 accuracy <- ((acc_table[1] + acc_table[4])/sum(acc_table))*100
 print(paste0("The accuracy of our optimum model was: ", round(accuracy, 2), "%."))
 ```
