@@ -281,11 +281,13 @@ model1 <- glm(factor(Subcategory) ~ . -Category, data = data_overall, family = '
 summary(model1)
 ```
 
-```{r}
+## Checking for Multicollinearity
+
+When conducting a test for multicollinearity we found that two of our independent variables were highly correlated, with GVIF values much greater than 5, and needed to be removed.
+
+```{r eval= TRUE, include=TRUE, echo=FALSE}
 vif(model1)
 ```
-
-
 
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Model 1:All independent variables used 
@@ -293,7 +295,11 @@ model1 <- glm(factor(Subcategory) ~ . -Category - AllowedIncome, data = data_ove
 summary(model1)
 ```
 
-```{r}
+## Fixing Multicollinearity
+
+After removing the independent variable "AllowedIncome" we find that our multicollinearity is below 5 and therefore reflects the fact that there is an absence of multicollinearity in our model.
+
+```{r eval= TRUE, include=TRUE, echo=FALSE}
 vif(model1)
 ```
 
@@ -301,7 +307,7 @@ vif(model1)
 
 
 
-```{r eval= TRUE, include=TRUE, echo=TRUE}
+```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Model 2: Marital Status and Savings Balance influence on divorce related questions
 model2 <- glm(Subcategory ~ factor(MaritalStatus) + SavingsBalance ,
               data = data_overall, family = 'binomial')
@@ -335,26 +341,28 @@ summary(model5)
 model_comparison <- compareGLM(model1, model2, model3, model4, model5)
 ```
 
+# Comparison of Models
+
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 model_comparison[1]
 model_comparison[2]
 ```
 
 
-# Model Accuracy
+# Accuracy of Best Model
 
-```{r}
+```{r eval= TRUE, include=TRUE, echo=FALSE}
 # Using Standard Errors
 exp(cbind(OR = coef(model1), confint.default(model1)))
 ```
 
+# Accuracy of Best Model
 
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 # Accuracy Table
 acc_table <- table(factor(data_overall$Subcategory), predict(model1)>0)
 acc_table
 ```
-
 
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 # % Accuracy
@@ -366,36 +374,21 @@ print(paste0("The accuracy of our optimum model was: ", round(accuracy, 2), "%."
 
 Daniel: 
 - It appears that our model 1 is the most accurate since it has the lowest AIC.
-- I think we can only use 1 model for viz 2 and viz 3, otherwise our pdf page count is more than 8 pages.
-- For viz 2, it might be better to look at the number of divorces per the population because as we'd expect, states with a large population would have more divorce related questions.
+
 
 - Also a bit weird that state like California and Idaho don't have any divorce related questions. I think thats because when we filtered the subcategories, those states don't have any subcategories with "Divorce". I don't know how we'd account for that... but we might need to so Prince doesn't mark us off.
 
-Daniel: 
-- We might need to remove the StateAbbr "US"??? Billy: Prolly
-- Actually we might not need to remove StateAbbr "US". Looking at the instructions PDF, is says that the "US" is a category for immigrants and veterans. So while its not a state in itself, still might be important to keep??
+
 
    
-  
+WHAT WE NEED TO FINISH:
+
+- Explaining why we use AIC BIC  
+- Explaining Confidence interval   
+- Suggestion based on limitations , missing data = limitation  
+- Ask whether visualizations meet the requirements 
    
-Comment by Billy: WHAT we need to finish today
-- The AIC is alarmingly high
-- Some assumptions to consider for our model
-  - observations are independent
-  Things we have to do: 
-  - no sever multicollinearity among explanatory variables, no highly correlated
-    variables
-  - no extreme outliers
-  - Remove independent variables with collinealarity
-  - logit model, the default should be binomial 
-  - Explaining why we use AIC BIC
-  - Check accuracy of model 
-  - Suggestion based on limitations , missing data = limitation
-  - Confidence interval 
-  -  Do the residual analysis to check for accuracy only for our best model.
-  - Ask whether visualizations meet the requirements
-  
-  
+
    
    
 
