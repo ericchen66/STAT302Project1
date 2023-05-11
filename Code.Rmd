@@ -279,6 +279,16 @@ summary(model1)
 ```
 
 
+Should we factor the categorical variables like StateAbbr and MaritialStatus for model1??
+
+
+```{r eval= TRUE, include=FALSE, echo=FALSE}
+# Model 1:All independent variables used 
+model1 <- glm(factor(Subcategory) ~ factor(StateAbbr) + Age + NumberInHousehold + factor(MaritalStatus) + AnnualIncome + SavingsBalance + CheckingBalance + AllowedIncome - Category, data = data_overall, family = 'binomial')
+summary(model1)
+```
+
+
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Chisqtest 
 chisq.test(data_overall$Subcategory, data_overall$SavingsBalance)
@@ -294,17 +304,9 @@ model2 <- glm(Subcategory ~ factor(MaritalStatus) + SavingsBalance ,
               data = data_overall, family = 'binomial')
 summary(model2)
 
+# Model 2 Residuals 
 par(mfrow = c(2, 2))
 plot(model2)
-vif(model2) 
-```
-
-```{r eval= TRUE, include=FALSE, echo=FALSE}
-# Model 2 Residuals  
-model2 <- glm(Subcategory ~ factor(MaritalStatus) + SavingsBalance ,
-              data = data_overall, family = 'binomial')
-summary(model2)
-
 vif(model2) 
 ```
 
