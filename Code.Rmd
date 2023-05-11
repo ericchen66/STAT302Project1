@@ -17,6 +17,7 @@ library(rcompanion)
 library(olsrr)
 library(maps)
 library(usmap)
+library(cowplot)
 ```
 
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
@@ -137,22 +138,14 @@ colnames(divorce_distrib)[which(names(divorce_distrib) == "Var1")] <- "state"
 # Selects the number of divorces per state
 divorce_plot <- divorce_distrib[divorce_distrib$Var2 != 0, ]  
 # Plots the distribution of divorces in each state
-plot_usmap(data = divorce_plot, values = "Freq", color = "red") + 
+div_map <- plot_usmap(data = divorce_plot, values = "Freq", color = "red") + 
   scale_fill_continuous(
-    low = "white", high = "red", name = "Number of Divorce Related Questions"
+    low = "white", high = "red", name = "Number of Questions"
     , label = scales::comma) + 
-  theme(legend.position = "right") +
-  labs(title = "US map plot of divorce-related questions")
+  theme(legend.position = "bottom") +
+  labs(title = "Number of divorce related questions")
 ```
-  Certain States such as: Washington, Oregon, Nevada, Montana, Colorado, 
-Minnesota, Ohio, and Kentucky are shown in gray because out of confidentiality 
-and per state law, they are not allowed to provided clients' information. 
-
-  However, the distribution of the divorce questions frequency does vary by 
-state. For example, states such as Texas and Florida have the highest frequency
-of divorce related questions discussed with the attorney on the online platform. 
-
-
+  
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 # Visualization 2
 # Create a data set with divorce related questions frequency per state
@@ -174,13 +167,15 @@ dfDivorce <- left_join(states_pop, divorce_plot, join_by("state")) %>%
   mutate(distrib = ((Freq/pop_2015)*100000)) %>%
   select(-Freq, -pop_2015)
 # Plots the distribution of divorces in each state per population
-plot_usmap(data = dfDivorce, values = "distrib", color = "red") + 
+DF_map <- plot_usmap(data = dfDivorce, values = "distrib", color = "red") + 
   scale_fill_continuous(
     low = "white", high = "red", name = 
-      "Divorce Related Questions per 100,000 people"
+      "Questions per 100,000 people"
     , label = scales::comma) + 
   theme(legend.position = "bottom") +
-  labs(title = "US map plot of frequency of divorce related questions")
+  labs(title = "Frequency of divorce related questions")
+
+plot_grid(DF_map, div_map, ncol = 2, nrow = 1)
 ```
 
 # Visualization 3: Financial Status Correlation with Divorce Rate
@@ -204,7 +199,7 @@ names(Subcategory.labs) <- c("1", "0")
 
 #   Bar charts of median annual income level of people of various marital status
 #   Faceted by subcategory 
-ggplot(data = data_noOutlier, aes(x = AnnualIncome , y = MaritalStatus, fill 
+PlotAnnual <- ggplot(data = data_noOutlier, aes(x = AnnualIncome , y = MaritalStatus, fill 
                                   = MaritalStatus)) +
   stat_summary(geom = "bar", fun.y = "median") +
   labs(x = "Annual Income",
@@ -219,7 +214,7 @@ ggplot(data = data_noOutlier, aes(x = AnnualIncome , y = MaritalStatus, fill
 
 #   Bar charts of median savings balance level of people of various marital status
 #   Faceted by subcategory 
-ggplot(data = data_noOutlier, aes(x = SavingsBalance , y = MaritalStatus, fill 
+PlotSavings <- ggplot(data = data_noOutlier, aes(x = SavingsBalance , y = MaritalStatus, fill 
                                   = MaritalStatus)) +
   stat_summary(geom = "bar", fun.y = "median") +
   labs(x = "Savings Balance",
@@ -234,7 +229,7 @@ ggplot(data = data_noOutlier, aes(x = SavingsBalance , y = MaritalStatus, fill
 
 #   Bar charts of median checking balance level of people of various marital status
 #   Faceted by subcategory 
-ggplot(data = data_noOutlier, aes(x = CheckingBalance , y = MaritalStatus, fill 
+PlotCheckings <- ggplot(data = data_noOutlier, aes(x = CheckingBalance , y = MaritalStatus, fill 
                                   = MaritalStatus)) +
   stat_summary(geom = "bar", fun.y = "median") +
   labs(x = "Checking Balance",
@@ -248,7 +243,7 @@ ggplot(data = data_noOutlier, aes(x = CheckingBalance , y = MaritalStatus, fill
 
 #   Bar charts of median checking balance level of people of various marital status
 #   Faceted by subcategory 
-ggplot(data = data_noOutlier, aes(x = AllowedIncome , y = MaritalStatus, fill 
+PlotAllowed <- ggplot(data = data_noOutlier, aes(x = AllowedIncome , y = MaritalStatus, fill 
                                   = MaritalStatus)) +
   stat_summary(geom = "bar", fun.y = "median") +
   labs(x = "Allowed Income",
@@ -259,6 +254,9 @@ ggplot(data = data_noOutlier, aes(x = AllowedIncome , y = MaritalStatus, fill
   theme_bw(base_size = 10) +
   theme(plot.title =
           element_text(hjust = 0.5), legend.position = "none")
+
+plot_grid(PlotAnnual, PlotAllowed, ncol = 1, nrow = 2)
+plot_grid(PlotCheckings, PlotSavings, ncol = 1, nrow = 2)
 ```
 
 
