@@ -286,7 +286,7 @@ chisq.test(data_overall$Subcategory, data_overall$AllowedIncome)
 ```
 
 
-```{r eval= TRUE, include=FALSE, echo=FALSE}
+```{r eval= TRUE, include=TRUE, echo=TRUE}
 # Model 2: Marital Status and Savings Balance influence on divorce related questions
 model2 <- glm(Subcategory ~ factor(MaritalStatus) + SavingsBalance ,
               data = data_overall, family = 'binomial')
@@ -359,60 +359,26 @@ Daniel:
 - We might need to remove the StateAbbr "US"??? Billy: Prolly
 - Actually we might not need to remove StateAbbr "US". Looking at the instructions PDF, is says that the "US" is a category for immigrants and veterans. So while its not a state in itself, still might be important to keep??
 
-Comment by Billy:
-- The AIC is alarmingly high
-- Some assumptions to consider for our model
-  - observations are independent
-  - no severe multicollinearity among explanatory variables, no highly correlated
-    variables
-  - no extreme outliers
-  - exist linear relationship between explanatory variable and logit of response
-    linearly related to log odds
-  - Large sample set
-  - Remove outliers
-  - Remove independent variables with collinealarity
+   
   
-
-Datasets: 
-  - Statesites
-    - StateAbbr
-    - AllowedAssets
-    - BaseIncomeLimit
-    - PerHouseholdMemberIncomeLimit
-    - IncomeMultiplier 
-  - Client
-    - StateAbbr
-    - Prettymuch the entire dataset 
-  - Categories
-    - Category: Family and Children 
-   -nSubcategories: everything related to divorces
    
-   
-   Comment by Billy:
+Comment by Billy: WHAT we need to finish today
 - The AIC is alarmingly high
 - Some assumptions to consider for our model
   - observations are independent
+  Things we have to do: 
   - no sever multicollinearity among explanatory variables, no highly correlated
     variables
   - no extreme outliers
-  - exist linear relationship between explanatory variable and logit of response
-    linearly related to log odds
-  - Large sample set
-  - Remove outliers
   - Remove independent variables with collinealarity
-
-   Questions: You were saying that we only need one of the residual analysis 
-   - logit model, the default should be binomial 
-   - interpret log log odds, don't have to interpret odds ratio 
-   - Confidence interval 
-   - Explaining why we use AIC VIC
-   - Check accuracy of model 
-   - Do the residual analysis to check for accuracy only for our best model.
-   - Suggestion based on limitations , missing data = limitation
-   - 1 summary for 1 model we submitted at the end
-   
-   Summary: come up with a story for our regression 
-   
+  - logit model, the default should be binomial 
+  - Explaining why we use AIC BIC
+  - Check accuracy of model 
+  - Suggestion based on limitations , missing data = limitation
+  - Confidence interval 
+  -  Do the residual analysis to check for accuracy only for our best model.
+  
+  
    
    
 
