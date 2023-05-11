@@ -113,12 +113,13 @@ top_subcats <- top_subcats %>%
 ggplot(top_subcats, aes(x = num_subcats, y = reorder(Subcategory, num_subcats))) +
   geom_bar(stat = "Identity", fill = "#00A19B") +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), plot.title = element_text(hjust = 0.5)) +
   labs(title = "Top 15 Subcategories",
        x = "Number of Clients",
        y = "Subcategory")
 ```
-Interpretation:  
+Interpretation:
+
   For our project, we want to started off with investigating the most frequently asked legal questions subcategories so we can define a most common question type based on the data set we have at hand and use it as the theme of our research question. 
 
   Based on our side way bar chart, it is clear to see that out of the top 15 subcategories, among the top three categories of questions asked by clients on the online platform, two of them are related to divorce.The question of subcategory Family/Divorce/Custody has the highest frequency among the top 15, and it has been asked by almost twice as many clients than the second subcategory of others, which is showing that the divorce related questions should be treated with more preparation when it comes to training volunteers.  
@@ -142,7 +143,7 @@ div_map <- plot_usmap(data = divorce_plot, values = "Freq", color = "red") +
   scale_fill_continuous(
     low = "white", high = "red", name = "Number of Questions"
     , label = scales::comma) + 
-  theme(legend.position = "bottom") +
+  theme(legend.position = "bottom", plot.title = element_text(hjust = 0.5)) +
   labs(title = "Number of divorce related questions")
 ```
   
@@ -172,11 +173,13 @@ DF_map <- plot_usmap(data = dfDivorce, values = "distrib", color = "red") +
     low = "white", high = "red", name = 
       "Questions per 100,000 people"
     , label = scales::comma) + 
-  theme(legend.position = "bottom") +
+  theme(legend.position = "bottom", plot.title = element_text(hjust = 0.5)) +
   labs(title = "Frequency of divorce related questions")
 
 plot_grid(DF_map, div_map, ncol = 2, nrow = 1)
 ```
+Interpretation:
+
   Certain States such as: Washington, Oregon, Nevada, Montana, Colorado, 
 Minnesota, Ohio, and Kentucky are shown in gray because out of confidentiality 
 and per state law, they are not allowed to provided clients' information, including the category of legal question they ask.
@@ -263,22 +266,20 @@ PlotAllowed <- ggplot(data = data_noOutlier, aes(x = AllowedIncome , y = Marital
 plot_grid(PlotAnnual, PlotAllowed, ncol = 1, nrow = 2)
 plot_grid(PlotCheckings, PlotSavings, ncol = 1, nrow = 2)
 ```
-  From the above visualization, we can see that the annual income of clients asking divorce-related questions is higher on average compared to other clients. The exception is in the married/remarried category, which itself exhibits higher annual income than other marital statuses.
+Interpretation: 
+  
+  From the above visualization, we can see that the annual income of clients asking divorce-related questions is higher on average compared to other clients. The exception is in the married/remarried category, which itself exhibits higher annual income than other marital statuses across both question categories. The states also recognize this discrepancy and generally allow higher income married individuals to ask pro bono questions. That is, the allowed income is noticeably higher for married or remarried people compared to other marital statuses. If someone wishes to ask a divorce-related question, we can also see that if they do not wish to disclose their marital status, their allowed income to ask a question free of charge drops. 
+  
+  Both the checking and savings balances of clients pursuing divorce-related advice is lower on average than the balances of clients asking other questions. Among all marital statuses asking divorce questions, divorced clients have the highest checking balance and widowed clients have the lowest. This is interesting because both statuses assume a person has no current partner. Clients with similar statuses, like single or separated, have average checking balances in between widowed and divorced clients. However, single and separated clients tend to not have high balances in their savings accounts, no matter what legal advice they are seeking. Unlike the data of annual/allowed income, married clients do not maintain significantly higher checking or savings balances compared to other clients, with the exception of the savings balance of clients asking non divorce-related legal questions.
+
+
+# Research question: What variables are significant predictors of whether a legal question is related to divorce?
 
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Model 1:All independent variables used 
 model1 <- glm(factor(Subcategory) ~ . -Category, data = data_overall, family = 'binomial')
 summary(model1)
 ```
-
-
-Research question Ideas: What factors predict the prevalence of divorce related legal questions in the US?
-
-What factors affect divorce rates in the US?
-
-How do certain factors affect the likelihood of a legal question being related to divorce?
-
-What variables are significant predictors of whether a legal question is related to divorce? 
 
 
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
@@ -400,6 +401,7 @@ Comment by Billy: WHAT we need to finish today
   - Suggestion based on limitations , missing data = limitation
   - Confidence interval 
   -  Do the residual analysis to check for accuracy only for our best model.
+  - Ask whether visualizations meet the requirements
   
   
    
