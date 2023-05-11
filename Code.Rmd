@@ -177,6 +177,11 @@ DF_map <- plot_usmap(data = dfDivorce, values = "distrib", color = "red") +
 
 plot_grid(DF_map, div_map, ncol = 2, nrow = 1)
 ```
+  Certain States such as: Washington, Oregon, Nevada, Montana, Colorado, 
+Minnesota, Ohio, and Kentucky are shown in gray because out of confidentiality 
+and per state law, they are not allowed to provided clients' information, including the category of legal question they ask.
+
+  For the 42 states that allow the disclosure of client information, Texas and Florida clearly have the highest number of divorce-related legal questions being asked. However, the distribution of the divorce question frequency does paints a different picture. Texas and Florida no longer stand out when we measure the number of questions asked per 100,000 residents. Here, the states of Wyoming and Maine stand out as places where divorce-related legal advice is most frequently sought on the online platform.
 
 # Visualization 3: Financial Status Correlation with Divorce Rate
 
@@ -258,7 +263,7 @@ PlotAllowed <- ggplot(data = data_noOutlier, aes(x = AllowedIncome , y = Marital
 plot_grid(PlotAnnual, PlotAllowed, ncol = 1, nrow = 2)
 plot_grid(PlotCheckings, PlotSavings, ncol = 1, nrow = 2)
 ```
-
+  From the above visualization, we can see that the annual income of clients asking divorce-related questions is higher on average compared to other clients. The exception is in the married/remarried category, which itself exhibits higher annual income than other marital statuses.
 
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Model 1:All independent variables used 
@@ -267,7 +272,13 @@ summary(model1)
 ```
 
 
-Should we factor the categorical variables like StateAbbr and MaritialStatus for model1??
+Research question Ideas: What factors predict the prevalence of divorce related legal questions in the US?
+
+What factors affect divorce rates in the US?
+
+How do certain factors affect the likelihood of a legal question being related to divorce?
+
+What variables are significant predictors of whether a legal question is related to divorce? 
 
 
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
