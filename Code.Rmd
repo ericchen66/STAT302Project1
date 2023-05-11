@@ -17,7 +17,6 @@ library(rcompanion)
 library(olsrr)
 library(maps)
 library(usmap)
-library(cowplot)
 ```
 
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
@@ -138,14 +137,22 @@ colnames(divorce_distrib)[which(names(divorce_distrib) == "Var1")] <- "state"
 # Selects the number of divorces per state
 divorce_plot <- divorce_distrib[divorce_distrib$Var2 != 0, ]  
 # Plots the distribution of divorces in each state
-div_map <- plot_usmap(data = divorce_plot, values = "Freq", color = "red") + 
+plot_usmap(data = divorce_plot, values = "Freq", color = "red") + 
   scale_fill_continuous(
-    low = "white", high = "red", name = "Number of Questions"
+    low = "white", high = "red", name = "Number of Divorce Related Questions"
     , label = scales::comma) + 
-  theme(legend.position = "bottom") +
-  labs(title = "Number of divorce related questions")
+  theme(legend.position = "right") +
+  labs(title = "US map plot of divorce-related questions")
 ```
-  
+  Certain States such as: Washington, Oregon, Nevada, Montana, Colorado, 
+Minnesota, Ohio, and Kentucky are shown in gray because out of confidentiality 
+and per state law, they are not allowed to provided clients' information. 
+
+  However, the distribution of the divorce questions frequency does vary by 
+state. For example, states such as Texas and Florida have the highest frequency
+of divorce related questions discussed with the attorney on the online platform. 
+
+
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 # Visualization 2
 # Create a data set with divorce related questions frequency per state
@@ -167,26 +174,14 @@ dfDivorce <- left_join(states_pop, divorce_plot, join_by("state")) %>%
   mutate(distrib = ((Freq/pop_2015)*100000)) %>%
   select(-Freq, -pop_2015)
 # Plots the distribution of divorces in each state per population
-DF_map <- plot_usmap(data = dfDivorce, values = "distrib", color = "red") + 
+plot_usmap(data = dfDivorce, values = "distrib", color = "red") + 
   scale_fill_continuous(
     low = "white", high = "red", name = 
-      "Questions per 100,000 people"
+      "Divorce Related Questions per 100,000 people"
     , label = scales::comma) + 
   theme(legend.position = "bottom") +
-  labs(title = "Frequency of divorce related questions")
-
-plot_grid(DF_map, div_map, ncol = 2, nrow = 1)
+  labs(title = "US map plot of frequency of divorce related questions")
 ```
-
-Certain States such as: Washington, Oregon, Nevada, Montana, Colorado, 
-Minnesota, Ohio, and Kentucky are shown in gray because out of confidentiality 
-and per state law, they are not allowed to provided clients' information. 
-
-  However, the distribution of the divorce questions frequency does vary by 
-state. For example, states such as Texas and Florida have the highest frequency
-of divorce related questions discussed with the attorney on the online platform. 
-
-
 
 # Visualization 3: Financial Status Correlation with Divorce Rate
 
@@ -207,11 +202,9 @@ data_noOutlier <- subset(data_overall, AnnualIncome > Lower & AnnualIncome < Upp
 Subcategory.labs <- c("Divorce", "Other")
 names(Subcategory.labs) <- c("1", "0")
 
-par(mfrow = c(2, 2))
-
 #   Bar charts of median annual income level of people of various marital status
 #   Faceted by subcategory 
-PlotAnnual <- ggplot(data = data_noOutlier, aes(x = AnnualIncome , y = MaritalStatus, fill 
+ggplot(data = data_noOutlier, aes(x = AnnualIncome , y = MaritalStatus, fill 
                                   = MaritalStatus)) +
   stat_summary(geom = "bar", fun.y = "median") +
   labs(x = "Annual Income",
@@ -226,7 +219,7 @@ PlotAnnual <- ggplot(data = data_noOutlier, aes(x = AnnualIncome , y = MaritalSt
 
 #   Bar charts of median savings balance level of people of various marital status
 #   Faceted by subcategory 
-PlotSavings <- ggplot(data = data_noOutlier, aes(x = SavingsBalance , y = MaritalStatus, fill 
+ggplot(data = data_noOutlier, aes(x = SavingsBalance , y = MaritalStatus, fill 
                                   = MaritalStatus)) +
   stat_summary(geom = "bar", fun.y = "median") +
   labs(x = "Savings Balance",
@@ -241,7 +234,7 @@ PlotSavings <- ggplot(data = data_noOutlier, aes(x = SavingsBalance , y = Marita
 
 #   Bar charts of median checking balance level of people of various marital status
 #   Faceted by subcategory 
-PlotCheckings <- ggplot(data = data_noOutlier, aes(x = CheckingBalance , y = MaritalStatus, fill 
+ggplot(data = data_noOutlier, aes(x = CheckingBalance , y = MaritalStatus, fill 
                                   = MaritalStatus)) +
   stat_summary(geom = "bar", fun.y = "median") +
   labs(x = "Checking Balance",
@@ -255,7 +248,7 @@ PlotCheckings <- ggplot(data = data_noOutlier, aes(x = CheckingBalance , y = Mar
 
 #   Bar charts of median checking balance level of people of various marital status
 #   Faceted by subcategory 
-PlotAllowed <- ggplot(data = data_noOutlier, aes(x = AllowedIncome , y = MaritalStatus, fill 
+ggplot(data = data_noOutlier, aes(x = AllowedIncome , y = MaritalStatus, fill 
                                   = MaritalStatus)) +
   stat_summary(geom = "bar", fun.y = "median") +
   labs(x = "Allowed Income",
@@ -266,9 +259,6 @@ PlotAllowed <- ggplot(data = data_noOutlier, aes(x = AllowedIncome , y = Marital
   theme_bw(base_size = 10) +
   theme(plot.title =
           element_text(hjust = 0.5), legend.position = "none")
-
-plot_grid(PlotAnnual, PlotAllowed, ncol = 1, nrow = 2)
-plot_grid(PlotCheckings, PlotSavings, ncol = 1, nrow = 2)
 ```
 
 
@@ -398,3 +388,34 @@ Datasets:
   - Categories
     - Category: Family and Children 
    -nSubcategories: everything related to divorces
+   
+   
+   Comment by Billy:
+- The AIC is alarmingly high
+- Some assumptions to consider for our model
+  - observations are independent
+  - no sever multicollinearity among explanatory variables, no highly correlated
+    variables
+  - no extreme outliers
+  - exist linear relationship between explanatory variable and logit of response
+    linearly related to log odds
+  - Large sample set
+  - Remove outliers
+  - Remove independent variables with collinealarity
+
+   Questions: You were saying that we only need one of the residual analysis 
+   - logit model, the default should be binomial 
+   - interpret log log odds, don't have to interpret odds ratio 
+   - Confidence interval 
+   - Explaining why we use AIC VIC
+   - Check accuracy of model 
+   - Do the residual analysis to check for accuracy only for our best model.
+   - Suggestion based on limitations , missing data = limitation
+   - 1 summary for 1 model we submitted at the end
+   
+   Summary: come up with a story for our regression 
+   
+   
+   
+
+  
