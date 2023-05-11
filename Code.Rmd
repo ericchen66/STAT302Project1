@@ -272,8 +272,20 @@ Should we factor the categorical variables like StateAbbr and MaritialStatus for
 
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Model 1:All independent variables used 
-model1 <- glm(factor(Subcategory) ~ factor(StateAbbr) + Age + NumberInHousehold + factor(MaritalStatus) + AnnualIncome + SavingsBalance + CheckingBalance + AllowedIncome - Category, data = data_overall, family = 'binomial')
+model1 <- glm(factor(Subcategory) ~ factor(StateAbbr) + Age + NumberInHousehold + factor(MaritalStatus) + AnnualIncome + SavingsBalance + CheckingBalance - Category, data = data_overall, family = 'binomial')
 summary(model1)
+```
+
+```{r}
+# Model 2 Residuals 
+par(mfrow = c(2, 2))
+plot(model1)
+vif(model1)
+```
+
+
+```{r}
+vif(model1)
 ```
 
 
