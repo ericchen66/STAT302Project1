@@ -281,33 +281,24 @@ model1 <- glm(factor(Subcategory) ~ . -Category, data = data_overall, family = '
 summary(model1)
 ```
 
+```{r}
+vif(model1)
+```
+
+
 
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Model 1:All independent variables used 
-model1 <- glm(factor(Subcategory) ~ factor(StateAbbr) + Age + NumberInHousehold + factor(MaritalStatus) + AnnualIncome + SavingsBalance + CheckingBalance - Category, data = data_overall, family = 'binomial')
+model1 <- glm(factor(Subcategory) ~ . -Category - AllowedIncome, data = data_overall, family = 'binomial')
 summary(model1)
 ```
 
 ```{r}
-# Model 2 Residuals 
-par(mfrow = c(2, 2))
-plot(model1)
 vif(model1)
 ```
 
 
-```{r}
-vif(model1)
-```
 
-
-```{r eval= TRUE, include=FALSE, echo=FALSE}
-# Chisqtest 
-chisq.test(data_overall$Subcategory, data_overall$SavingsBalance)
-chisq.test(data_overall$Subcategory, data_overall$AnnualIncome)
-chisq.test(data_overall$Subcategory, data_overall$CheckingBalance)
-chisq.test(data_overall$Subcategory, data_overall$AllowedIncome)
-```
 
 
 ```{r eval= TRUE, include=TRUE, echo=TRUE}
@@ -315,11 +306,6 @@ chisq.test(data_overall$Subcategory, data_overall$AllowedIncome)
 model2 <- glm(Subcategory ~ factor(MaritalStatus) + SavingsBalance ,
               data = data_overall, family = 'binomial')
 summary(model2)
-
-# Model 2 Residuals 
-par(mfrow = c(2, 2))
-plot(model2)
-vif(model2) 
 ```
 
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
@@ -356,6 +342,12 @@ model_comparison[2]
 
 
 # Model Accuracy
+
+```{r}
+# Using Standard Errors
+exp(cbind(OR = coef(model1), confint.default(model1)))
+```
+
 
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 # Accuracy Table
