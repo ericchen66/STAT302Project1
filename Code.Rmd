@@ -357,6 +357,7 @@ model_comparison <- compareGLM(model1, model2, model3, model4, model5)
 model_comparison[1]
 model_comparison[2]
 ```
+We selected model 1 as it had both the lowest AIC and BIC scores. AIC is a better indicator to use in answering our research question, as it maximizes the predictive power of the data for any future data. However, since both the AIC and BIC values agree on which model out of the five we created is the best, we can safely choose model 1 moving forward.
 
 ### Summary of best model
 
@@ -386,17 +387,31 @@ acc_table
 accuracy <- ((acc_table[1] + acc_table[4])/sum(acc_table))*100
 print(paste0("The accuracy of our best model was: ", round(accuracy, 2), "%."))
 ```
+### CA, ID, SC, US, and WI have no divorce-related questions
+### Top shows total questions by state, bottom shows number of divorce-related questions
+```{r eval= TRUE, include=TRUE, echo=FALSE}
+table(data_noOutlier$StateAbbr)
+onlyDivorce <- data_noOutlier %>% filter(Subcategory == 1)
+table(onlyDivorce$StateAbbr)
+```
+# Findings
+
+Based on the odds ratios of our best model, it appears that clients from South Dakota, Maine, and Hawaii are twice as likely to ask divorce-related questions compared to our reference state of Florida. We picked Florida as our reference state for our model because it is a highly populous and has high degrees of social and economic power in the country, all the while producing a rather modest frequency of divorce-related questions. Excluding states without a single divorce-related question, Indiana and Nebraska have very low rates of divorce-related questions compared to other states. With an odds ratio of slightly higher than 0.2, a client from these two states have about one fifth the odds of asking a divorce-related question compared to a client from Florida. It should be noted that many states, even if they provide client data, do not have enough data to generate statistically significant conclusions, but none of the aforementioned states fall into that category.
+
+Other than the state where a question originated from, age, number of people in family, and marital status are both significant predictors of whether a client will ask a divorce-related question. Based on the odds ratio, for every year a client gets older, the odds of their question being related to divorce decreases by a factor of about 0.96. Since they all have odds ratios greater than 1, all marital statuses increase the odds of questions being divorce-related compared to our reference group of "single", with a status of "separated" increasing the odds by nearly a factor of 13. This is with the exception of the "widow" group, which itself is not a significant predictor of the dependent variable. This makes sense as clients seeking divorce advice are much more likely to be in some type of strained relationship, which suggests a separated couple, whilst single suggests no relationship at all.
+
+Finally, both the checking and savings balances of a client significantly predict the category of question they may ask. However, we found no predictive power in a client's annual income.
 
 # COMMENTS
 
 
 WHAT WE NEED TO FINISH:
 
-- Comment on our findings related to the research question
-- Explain why we selected the best model (using lowest AIC, BIC )
+- Comment on our findings related to the research question (Finished)
+- Explain why we selected the best model (using lowest AIC, BIC ) (Finished)
 - Explain our log odds
 - Explain Confidence interval   
-- Discuss the positive predictor and negative predictor variables (in reference to FL and Single)
+- Discuss the positive predictor and negative predictor variables (in reference to FL and Single) (Did a little in the findings idk if that's enough)
 
 - Write the summary
   - Suggestion based on limitations , missing data = limitation, states didn't provide data, also some states didn't have Divorce as a subcategory (such as California and the states that are white in viz 2)
