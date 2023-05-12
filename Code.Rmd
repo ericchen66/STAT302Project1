@@ -364,6 +364,22 @@ model_comparison[2]
 
 ### Summary of best model
 
+With reference to the state of residence of Florida and marital status of Single, we can identify the positive predictor and negative predictor variables to be:
+
+```{r eval= TRUE, include=TRUE, echo=FALSE}
+coeff_pos <- model1$coefficients[model1$coefficients >= 0]
+coeff_pos
+coeff_neg <- model1$coefficients[model1$coefficients < 0]
+coeff_neg
+```
+
+The predictors that are considered significant at the 5% level of confidence are:
+
+```{r eval= TRUE, include=TRUE, echo=FALSE}
+mod_summ <- data.frame(summary(model1)$coef[summary(model1)$coef[,4] <= .05, 4])
+print(paste0(row.names(mod_summ)))
+```
+
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 summary(model1)
 ```
@@ -379,28 +395,26 @@ exp(cbind(OR = coef(model1), confint.default(model1)))
 
 ### Accuracy of Best Model
 
+The classification table below shows us that 
+
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 # Accuracy Table
 acc_table <- table(factor(data_overall$Subcategory), predict(model1)>0)
 acc_table
-```
-
-```{r eval= TRUE, include=TRUE, echo=FALSE}
 # % Accuracy
 accuracy <- ((acc_table[1] + acc_table[4])/sum(acc_table))*100
 print(paste0("The accuracy of our best model was: ", round(accuracy, 2), "%."))
 ```
+
+
 
 # COMMENTS
 
 
 WHAT WE NEED TO FINISH:
 
-- Comment on our findings related to the research question
-- Explain why we selected the best model (using lowest AIC, BIC )
 - Explain our log odds
 - Explain Confidence interval   
-- Discuss the positive predictor and negative predictor variables (in reference to FL and Single)
 
 - Write the summary
   - Suggestion based on limitations , missing data = limitation, states didn't provide data, also some states didn't have Divorce as a subcategory (such as California and the states that are white in viz 2)
