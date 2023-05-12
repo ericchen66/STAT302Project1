@@ -353,6 +353,10 @@ model_comparison <- compareGLM(model1, model2, model3, model4, model5)
 
 ### Comparison of Models
 
+To identify the optimal model, we assessed the Akaike Information Criterion (AIC) and Bayesian Information Criterion (BIC) values associated with the five logistic regression models we constructed. 
+
+Based on the principle that model selection criteria strike a balance between goodness of fit and model complexity, it is known that AIC tends to favor more complex models, whereas BIC penalizes complexity more rigorously. Lower values of AIC or BIC indicate a better fit. By examining the chart, we note that the lowest AIC and BIC values correspond to our initial model, which included all the independent variables discussed in our research question.
+
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 model_comparison[1]
 model_comparison[2]
@@ -403,8 +407,8 @@ WHAT WE NEED TO FINISH:
 
 - SIGN THE FORM SO WE'RE GRADED!!!
    
+# Conclusion
 
-   
    
 
   
