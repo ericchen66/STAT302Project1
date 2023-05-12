@@ -388,7 +388,7 @@ summary(model1)
 
 ### Odds ratio and confidence intervals for the best model
 
-Using Florida as the reference state and Single as the reference marital status, we can observe some important relationships between the response variable and the associated covariates while holding all other variables constant. For instance
+By considering Florida as the reference state and Single as the reference marital status, we can discern significant associations between the response variable and the corresponding covariates while keeping all other variables constant. For example, in comparison to single clients, those who are separated exhibited considerably higher odds (OR = 12.9, 95% CI = 11.9-14.1) of inquiring about divorce-related matters. In terms of percentage change, the likelihood of a separated client posing divorce-related questions is approximately 1190% greater than that of a single client.
 
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 # Using Standard Errors
@@ -406,15 +406,6 @@ acc_table
 # % Accuracy
 accuracy <- ((acc_table[1] + acc_table[4])/sum(acc_table))*100
 print(paste0("The accuracy of our best model was: ", round(accuracy, 2), "%."))
-```
-
-
-#### CA, ID, SC, US, and WI have no divorce-related questions
-#### Top shows total questions by state, bottom shows number of divorce-related questions
-```{r eval= TRUE, include=TRUE, echo=FALSE}
-table(data_noOutlier$StateAbbr)
-onlyDivorce <- data_noOutlier %>% filter(Subcategory == 1)
-table(onlyDivorce$StateAbbr)
 ```
 
 # Conclusions
