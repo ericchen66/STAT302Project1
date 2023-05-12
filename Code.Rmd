@@ -428,6 +428,7 @@ In conclusion, the balances of both checking and savings accounts have a strong 
 # COMMENTS
 
 
+
 WHAT WE NEED TO FINISH:
 
 - Write the summary
