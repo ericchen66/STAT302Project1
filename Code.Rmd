@@ -181,7 +181,7 @@ States like Washington, Oregon, Nevada, Montana, Colorado, North Dakota, Minneso
 
 Among the 42 states that permit the revealing of client details, Texas and Florida demonstrate the greatest volume of inquiries concerning divorce law. Nonetheless, the prevalence of divorce-related questions takes on a distinct pattern when analyzed differently. When considering the number of queries per 100,000 residents, Texas and Florida no longer appear exceptional. Instead, it is Wyoming and Maine that emerge as prominent locations where the rate of individuals frequently seeking online guidance regarding divorce matters are the highest.
 
-# Visualization 3: Financial Status Correlation with Divorce Rate
+# Visualization 3: Financial Status Correlation with Marital Status
 
 ```{r eval= TRUE, include=TRUE, echo=FALSE, warning = FALSE, message=FALSE}
 
@@ -271,7 +271,9 @@ Based on the aforementioned visualization, it becomes apparent that clients seek
 On average, clients seeking divorce-related guidance tend to have lower checking and savings balances compared to clients with different types of inquiries. Among all marital statuses seeking divorce advice, individuals who are divorced possess the highest average checking balance, while those who are widowed have the lowest. This observation is intriguing as both statuses imply that the person does not currently have a partner. Clients with similar statuses, such as single or separated, have checking balances that fall between those of widowed and divorced individuals. However, regardless of the legal advice they seek, single and separated clients generally do not maintain high balances in their savings accounts. In contrast to the data on annual/allowed income, married clients do not exhibit significantly higher checking or savings balances compared to other clients, except for the savings balance of clients seeking non-divorce-related legal advice.
 
 
-# Research question: Which variables carry substantial predictive power in determining whether a legal question is associated with divorce?
+# Research question: Can we derive significant predictive ability by assessing clients' background, including their financial circumstances, relationship status, and state of residence, to determine whether their legal question will be related to divorce?
+
+The objective of this research inquiry is to accurately forecast whether a client will seek legal assistance related to divorce or another area based solely on their background information, encompassing finances, relationship status, and residential location. In this study, we propose that the dependent variable is binary, representing whether the client poses a divorce-related question or not. Meanwhile, the independent or predictor variables encompass the client's age, marital status, state of residence, household size, annual income, as well as checking and savings balances.
 
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Model 1:All independent variables used (in reference to FL and Single)
@@ -279,14 +281,24 @@ data_overall$StateAbbr <- relevel(factor(data_overall$StateAbbr), ref = 'FL')
 data_overall$MaritalStatus <- relevel(factor(data_overall$MaritalStatus), ref = 'Single')
 
 model1 <- glm(factor(Subcategory) ~ factor(StateAbbr) + Age + NumberInHousehold
-              + factor(MaritalStatus) + AnnualIncome + SavingsBalance + CheckingBalance
-              - AllowedIncome - Category, data = data_overall, family = 'binomial')
-summary(model1)
+              + factor(MaritalStatus) + AnnualIncome + SavingsBalance + CheckingBalance 
+              - Category, data = data_overall, family = 'binomial')
 ```
 
-### Checking for Multicollinearity
+## Assumptions
 
-When conducting a test for multicollinearity we found that two of our independent variables were highly correlated, with GVIF values much greater than 5, and needed to be removed.
+Given that logistic regression was employed for our research inquiry, we assessed the presence of significant multicollinearity among the predictor variables while making the following assumptions: 
+
+* The dependent variable exhibits two distinct outcomes, namely divorce-related questions or non-divorce-related questions.
+* Each observation in the dataset is independent and not a repeated measurement of the same client.
+* A linear association exists between each predictor variable and the logit of the dependent variable.
+* The dataset comprises a substantial number of samples.
+* There are no extreme outliers or influential observations within the dataset.
+
+
+### Testing for Multicollinearity
+
+During the multicollinearity assessment, it was observed that two of our independent variables, namely NumberInHousehold and AllowedIncome, exhibited a strong correlation. The GVIF values for these variables exceeded 5, indicating the need for their exclusion. This finding aligns with expectations, as the state's permitted income typically depends on the number of dependents residing in a household.
 
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 vif(model1)
@@ -294,13 +306,15 @@ vif(model1)
 
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Model 1:All independent variables used 
-model1 <- glm(factor(Subcategory) ~ . -Category - AllowedIncome, data = data_overall, family = 'binomial')
-summary(model1)
+model1 <- glm(factor(Subcategory) ~ . - AllowedIncome - Category, 
+              data = data_overall, family = 'binomial')
+
+
 ```
 
 ### Fixing Multicollinearity
 
-After removing the independent variable "AllowedIncome" we find that our multicollinearity is below 5 and therefore reflects the fact that there is an absence of multicollinearity in our model.
+Upon exclusion of the independent variable "AllowedIncome," we observe a multicollinearity level of less than 5, indicating the absence of multicollinearity within our model.
 
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 vif(model1)
@@ -311,7 +325,6 @@ vif(model1)
 # Model 2: Marital Status and Savings Balance influence on divorce related questions
 model2 <- glm(Subcategory ~ factor(MaritalStatus) + SavingsBalance ,
               data = data_overall, family = 'binomial')
-summary(model2)
 ```
 
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
@@ -319,27 +332,27 @@ summary(model2)
 model3 <- glm(factor(Subcategory) ~ SavingsBalance + CheckingBalance + 
               factor(MaritalStatus) + NumberInHousehold , data = data_overall,
               family = 'binomial')
-summary(model3)
 ```
 
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Model 4:
 model4 <- glm(factor(Subcategory) ~ AllowedIncome, data = data_overall,
               family = 'binomial')
-summary(model4)
 ```
 
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Model 5: Are just the states good predictors?
 model5 <- glm(factor(Subcategory) ~ factor(StateAbbr) , data = data_overall,
               family = 'binomial')
-summary(model5)
 ```
 
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Model comparison
 model_comparison <- compareGLM(model1, model2, model3, model4, model5)
 ```
+
+## Model creation & evaluation
+
 
 ### Comparison of Models
 
@@ -348,8 +361,15 @@ model_comparison[1]
 model_comparison[2]
 ```
 
+### Summary of best model
 
-### Odds ratio and confidence intervals for the Best Model
+```{r eval= TRUE, include=TRUE, echo=FALSE}
+summary(model1)
+```
+
+
+
+### Odds ratio and confidence intervals for the best model
 
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 # Using Standard Errors
@@ -376,13 +396,12 @@ print(paste0("The accuracy of our best model was: ", round(accuracy, 2), "%."))
 WHAT WE NEED TO FINISH:
 
 - Explain our assumptions (ie. multicollinearity)
-- Explain what we intend to achieve with proposed question
 - Comment on our findings related to the research question
-- clearly state our dependent and independent variables
 - Explain why we selected the best model (using lowest AIC, BIC )
 - Explain our log odds
 - Explain Confidence interval   
 - Discuss the positive predictor and negative predictor variables (in reference to FL and Single)
+
 - Write the summary
   - Suggestion based on limitations , missing data = limitation, states didn't provide data, also some states didn't have Divorce as a subcategory (such as California and the states that are white in viz 2)
 
