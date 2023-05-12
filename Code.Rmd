@@ -276,12 +276,17 @@ Interpretation:
 # Research question: What variables are significant predictors of whether a legal question is related to divorce?
 
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
-# Model 1:All independent variables used 
-model1 <- glm(factor(Subcategory) ~ . -Category, data = data_overall, family = 'binomial')
+# Model 1:All independent variables used (in reference to FL and Single)
+data_overall$StateAbbr <- relevel(factor(data_overall$StateAbbr), ref = 'FL')
+data_overall$MaritalStatus <- relevel(factor(data_overall$MaritalStatus), ref = 'Single')
+
+model1 <- glm(factor(Subcategory) ~ factor(StateAbbr) + Age + NumberInHousehold
+              + factor(MaritalStatus) + AnnualIncome + SavingsBalance + CheckingBalance
+              - AllowedIncome - Category, data = data_overall, family = 'binomial')
 summary(model1)
 ```
 
-## Checking for Multicollinearity
+### Checking for Multicollinearity
 
 When conducting a test for multicollinearity we found that two of our independent variables were highly correlated, with GVIF values much greater than 5, and needed to be removed.
 
@@ -295,16 +300,13 @@ model1 <- glm(factor(Subcategory) ~ . -Category - AllowedIncome, data = data_ove
 summary(model1)
 ```
 
-## Fixing Multicollinearity
+### Fixing Multicollinearity
 
 After removing the independent variable "AllowedIncome" we find that our multicollinearity is below 5 and therefore reflects the fact that there is an absence of multicollinearity in our model.
 
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 vif(model1)
 ```
-
-
-
 
 
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
@@ -341,7 +343,7 @@ summary(model5)
 model_comparison <- compareGLM(model1, model2, model3, model4, model5)
 ```
 
-# Comparison of Models
+### Comparison of Models
 
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 model_comparison[1]
@@ -349,14 +351,14 @@ model_comparison[2]
 ```
 
 
-# Accuracy of Best Model
+### Odds ratio and confidence intervals for the Best Model
 
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 # Using Standard Errors
 exp(cbind(OR = coef(model1), confint.default(model1)))
 ```
 
-# Accuracy of Best Model
+### Accuracy of Best Model
 
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 # Accuracy Table
@@ -367,26 +369,26 @@ acc_table
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 # % Accuracy
 accuracy <- ((acc_table[1] + acc_table[4])/sum(acc_table))*100
-print(paste0("The accuracy of our optimum model was: ", round(accuracy, 2), "%."))
+print(paste0("The accuracy of our best model was: ", round(accuracy, 2), "%."))
 ```
 
 # COMMENTS
 
-Daniel: 
-- It appears that our model 1 is the most accurate since it has the lowest AIC.
 
-
-- Also a bit weird that state like California and Idaho don't have any divorce related questions. I think thats because when we filtered the subcategories, those states don't have any subcategories with "Divorce". I don't know how we'd account for that... but we might need to so Prince doesn't mark us off.
-
-
-
-   
 WHAT WE NEED TO FINISH:
 
-- Explaining why we use AIC BIC  
-- Explaining Confidence interval   
-- Suggestion based on limitations , missing data = limitation  
-- Ask whether visualizations meet the requirements 
+- Explain our assumptions (ie. multicollinearity)
+- Explain what we intend to achieve with proposed question
+- Comment on our findings related to the research question
+- clearly state our dependent and independent variables
+- Explain why we selected the best model (using lowest AIC, BIC )
+- Explain our log odds
+- Explain Confidence interval   
+- Discuss the positive predictor and negative predictor variables (in reference to FL and Single)
+- Suggestion based on limitations , missing data = limitation, states didn't provide data, also some states didn't have Divorce as a subcategory (such as California and the states that are white in viz 2)
+- Ask whether visualizations meet the requirements (maybe need to change viz 1 to something different.)
+
+- SIGN THE FORM SO WE'RE GRADED!!!
    
 
    
