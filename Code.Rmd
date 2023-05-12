@@ -388,10 +388,14 @@ summary(model1)
 
 ### Odds ratio and confidence intervals for the best model
 
+Using Florida as the reference state and Single as the reference marital status, we can observe some important relationships between the response variable and the associated covariates while holding all other variables constant. For instance
+
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 # Using Standard Errors
 exp(cbind(OR = coef(model1), confint.default(model1)))
 ```
+
+
 
 ### Accuracy of Best Model
 
