@@ -355,7 +355,8 @@ model_comparison <- compareGLM(model1, model2, model3, model4, model5)
 
 To identify the optimal model, we assessed the Akaike Information Criterion (AIC) and Bayesian Information Criterion (BIC) values associated with the five logistic regression models we constructed. 
 
-Based on the principle that model selection criteria strike a balance between goodness of fit and model complexity, it is known that AIC tends to favor more complex models, whereas BIC penalizes complexity more rigorously. Lower values of AIC or BIC indicate a better fit. By examining the chart, we note that the lowest AIC and BIC values correspond to our initial model, which included all the independent variables discussed in our research question.
+Based on the principle that model selection criteria strike a balance between goodness of fit and model complexity, it is known that AIC tends to favor more complex models, whereas BIC penalizes complexity more rigorously. Lower values of AIC or BIC indicate a better fit. By examining the chart, we note that the lowest AIC and BIC values correspond to our initial model, which included all the independent variables discussed in our research question.  
+Therefore we selected model 1 as it had both the lowest AIC and BIC scores. AIC is a better indicator to use in answering our research question, as it maximizes the predictive power of the data for any future data. However, since both the AIC and BIC values agree on which model out of the five we created is the best, we can safely choose model 1 moving forward.
 
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 model_comparison[1]
@@ -373,18 +374,17 @@ coeff_neg <- model1$coefficients[model1$coefficients < 0]
 coeff_neg
 ```
 
-The predictors that are considered significant at the 5% level of confidence are:
-
-```{r eval= TRUE, include=TRUE, echo=FALSE}
+```{r eval= TRUE, include=FALSE, echo=FALSE}
+# The predictors that are considered significant at the 5% level of confidence are:
 mod_summ <- data.frame(summary(model1)$coef[summary(model1)$coef[,4] <= .05, 4])
 print(paste0(row.names(mod_summ)))
 ```
 
+The summary of our best model is displayed below.
+
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 summary(model1)
 ```
-
-
 
 ### Odds ratio and confidence intervals for the best model
 
@@ -395,11 +395,9 @@ Using Florida as the reference state and Single as the reference marital status,
 exp(cbind(OR = coef(model1), confint.default(model1)))
 ```
 
-
-
 ### Accuracy of Best Model
 
-The classification table below shows us that 
+Based on the classification table below, our optimal model accurately predicted 37,840 out of 50,620 total observations.
 
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 # Accuracy Table
@@ -411,22 +409,38 @@ print(paste0("The accuracy of our best model was: ", round(accuracy, 2), "%."))
 ```
 
 
+#### CA, ID, SC, US, and WI have no divorce-related questions
+#### Top shows total questions by state, bottom shows number of divorce-related questions
+```{r eval= TRUE, include=TRUE, echo=FALSE}
+table(data_noOutlier$StateAbbr)
+onlyDivorce <- data_noOutlier %>% filter(Subcategory == 1)
+table(onlyDivorce$StateAbbr)
+```
+
+# Conclusions
+
+Based on the odds ratios obtained from our top-performing model, it is evident that clients hailing from South Dakota, Maine, and Hawaii exhibit approximately double the likelihood of inquiring about divorce-related matters in comparison to our chosen reference state, Florida. We selected Florida as our reference state due to its significant population, social and economic influence, while having a relatively modest frequency of divorce-related queries. By excluding states without any recorded divorce-related questions, it becomes apparent that Indiana and Nebraska have notably lower rates of such inquiries compared to other states. The odds ratio, slightly exceeding 0.2, indicates that clients from these two states have approximately one-fifth the likelihood of asking a divorce-related question compared to clients from Florida, holding all other variables constant. It is important to note that although numerous states provide client data, many lack sufficient information to draw statistically significant conclusions. However, none of the aforementioned states fall into this category.
+
+Apart from the state of origin, the variables of age, family size, and marital status exhibit significant predictive power in determining whether a client will inquire about divorce-related matters. According to the odds ratio, for each passing year, the likelihood of a client's question being related to divorce decreases by approximately 0.96, holding all other variables constant. All marital statuses, except for "widow," exhibit odds ratios greater than 1, indicating an increased likelihood of divorce-related questions compared to our reference group, "single." Notably, being "separated" raises the odds by nearly a factor of 13, while holding all other variables constant. This aligns with the expectation that clients seeking divorce advice are more likely to be in strained relationships, while being single suggests an absence of a relationship altogether.
+
+In conclusion, the balances of both checking and savings accounts have a strong predictive influence on the category of questions a client may ask. Conversely, we did not observe any predictive capability regarding a client's annual income.
 
 # COMMENTS
 
 
 WHAT WE NEED TO FINISH:
 
-- Explain our log odds
-- Explain Confidence interval   
-
 - Write the summary
   - Suggestion based on limitations , missing data = limitation, states didn't provide data, also some states didn't have Divorce as a subcategory (such as California and the states that are white in viz 2)
 
-- SIGN THE FORM SO WE'RE GRADED!!!
-   
-# Conclusion
+FROM PRINCE'S PROJECT EXPECTATIONS:
 
+• Executive summary of your results, your main takeaways and what you
+learned completing this project.  
+• Findings consistent with literature (if any).  
+• Any limitations.  
+• Suggestions (usually based on limitations) and/or recommendations.  
+   
    
 
   
