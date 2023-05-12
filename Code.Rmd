@@ -280,9 +280,9 @@ The objective of this research inquiry is to accurately forecast whether a clien
 data_overall$StateAbbr <- relevel(factor(data_overall$StateAbbr), ref = 'FL')
 data_overall$MaritalStatus <- relevel(factor(data_overall$MaritalStatus), ref = 'Single')
 
-model1 <- glm(factor(Subcategory) ~ factor(StateAbbr) + Age + NumberInHousehold
-              + factor(MaritalStatus) + AnnualIncome + SavingsBalance + CheckingBalance 
-              - Category, data = data_overall, family = 'binomial')
+model1 <- glm(Subcategory ~ StateAbbr + Age + NumberInHousehold
+              + MaritalStatus + AnnualIncome + SavingsBalance + CheckingBalance 
+              + AllowedIncome - Category, data = data_overall, family = 'binomial')
 ```
 
 ## Assumptions
@@ -306,10 +306,8 @@ vif(model1)
 
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Model 1:All independent variables used 
-model1 <- glm(factor(Subcategory) ~ . - AllowedIncome - Category, 
+model1 <- glm(Subcategory ~ . - AllowedIncome - Category, 
               data = data_overall, family = 'binomial')
-
-
 ```
 
 ### Fixing Multicollinearity
@@ -320,29 +318,28 @@ Upon exclusion of the independent variable "AllowedIncome," we observe a multico
 vif(model1)
 ```
 
-
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Model 2: Marital Status and Savings Balance influence on divorce related questions
-model2 <- glm(Subcategory ~ factor(MaritalStatus) + SavingsBalance ,
+model2 <- glm(Subcategory ~ MaritalStatus + SavingsBalance ,
               data = data_overall, family = 'binomial')
 ```
 
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Model 3: 
-model3 <- glm(factor(Subcategory) ~ SavingsBalance + CheckingBalance + 
-              factor(MaritalStatus) + NumberInHousehold , data = data_overall,
+model3 <- glm(Subcategory ~ SavingsBalance + CheckingBalance + 
+                MaritalStatus + NumberInHousehold , data = data_overall, 
               family = 'binomial')
 ```
 
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Model 4:
-model4 <- glm(factor(Subcategory) ~ AllowedIncome, data = data_overall,
+model4 <- glm(Subcategory ~ AllowedIncome, data = data_overall,
               family = 'binomial')
 ```
 
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Model 5: Are just the states good predictors?
-model5 <- glm(factor(Subcategory) ~ factor(StateAbbr) , data = data_overall,
+model5 <- glm(Subcategory ~ StateAbbr, data = data_overall,
               family = 'binomial')
 ```
 
@@ -395,7 +392,6 @@ print(paste0("The accuracy of our best model was: ", round(accuracy, 2), "%."))
 
 WHAT WE NEED TO FINISH:
 
-- Explain our assumptions (ie. multicollinearity)
 - Comment on our findings related to the research question
 - Explain why we selected the best model (using lowest AIC, BIC )
 - Explain our log odds
