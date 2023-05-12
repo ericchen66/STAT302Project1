@@ -123,33 +123,15 @@ ggplot(top_subcats, aes(x = num_subcats, y = reorder(Subcategory, num_subcats)))
 
 ### Interpretation of visualization 1:
 
-  For our project, we want to started off with investigating the most frequently asked legal questions subcategories so we can define a most common question type based on the data set we have at hand and use it as the theme of our research question. 
+Our project aims to begin by exploring the subcategories of legal questions that are frequently asked. This will enable us to identify the most common question type within the dataset we possess and use it as the central topic for our research inquiry. 
 
-  Based on our side way bar chart, it is clear to see that out of the top 15 subcategories, among the top three categories of questions asked by clients on the online platform, two of them are related to divorce.The question of subcategory Family/Divorce/Custody has the highest frequency among the top 15, and it has been asked by almost twice as many clients than the second subcategory of others, which is showing that the divorce related questions should be treated with more preparation when it comes to training volunteers.  
+According to our horizontal lollipop chart, it is evident that within the top 15 subcategories, two of the highest-ranking categories of inquiries made by clients on the online platform pertain to divorce. The subcategory "Family/Divorce/Custody" holds the highest occurrence among the top 15, with nearly double the number of clients asking questions compared to the second-ranking subcategory, "Other." This highlights the importance of adequately preparing volunteers to handle divorce-related queries.
 
-  This is intriguing to us as it begs for answers to the questions such as: "What are the major determinants of divorce?","Do the clients' backgrounds affect their tendency to ask divorce related question on the ABA online platform?", and most importantly, "How do we prepare our volunteers to address these divorce related questions?"
+We find this situation fascinating as it prompts us to seek answers to inquiries like: "What are the key factors influencing divorce?", "Does clients' background influence their inclination to ask divorce-related questions on the ABA online platform?", and, importantly, "How can we adequately train our volunteers to handle these divorce-related inquiries?"
   
 
 # Visualization 2: US Map of Divorce Related Questions Distribution
 
-```{r eval= TRUE, include=TRUE, echo=FALSE}
-# Visualization 2
-# Create a data set with divorce related questions frequency per state
-contingency <- table(data_overall$StateAbbr,data_overall$Subcategory)
-divorce_distrib <- as.data.frame(contingency)
-# Change the column name var1 to state, so we can use plot_usmap
-colnames(divorce_distrib)[which(names(divorce_distrib) == "Var1")] <- "state"
-# Selects the number of divorces per state
-divorce_plot <- divorce_distrib[divorce_distrib$Var2 != 0, ]  
-# Plots the distribution of divorces in each state
-div_map <- plot_usmap(data = divorce_plot, values = "Freq", color = "red") + 
-  scale_fill_continuous(
-    low = "white", high = "red", name = "Number of Questions"
-    , label = scales::comma) + 
-  theme(legend.position = "bottom", plot.title = element_text(hjust = 0.5)) +
-  labs(title = "Number of divorce related questions")
-```
-  
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 # Visualization 2
 # Create a data set with divorce related questions frequency per state
@@ -165,6 +147,15 @@ divorce_plot$state <- as.character(divorce_plot$state)
 states_pop <- statepop
 states_pop <- states_pop %>%
   rename("state" = "abbr")
+
+# Plots the distribution of divorces in each state
+div_map <- plot_usmap(data = divorce_plot, values = "Freq", color = "red") + 
+  scale_fill_continuous(
+    low = "white", high = "red", name = "Number of Questions"
+    , label = scales::comma) + 
+  theme(legend.position = "bottom", plot.title = element_text(hjust = 0.5)) +
+  labs(title = "Number of divorce related questions")
+
 # Merge the population data with divorce data
 dfDivorce <- left_join(states_pop, divorce_plot, join_by("state")) %>%
   select(-fips, -full) %>%
@@ -177,18 +168,18 @@ DF_map <- plot_usmap(data = dfDivorce, values = "distrib", color = "red") +
       "Questions per 100,000 people"
     , label = scales::comma) + 
   theme(legend.position = "bottom", plot.title = element_text(hjust = 0.5)) +
-  labs(title = "Frequency of divorce related questions")
+  labs(title = "Prevalence of divorce related questions")
 
-plot_grid(DF_map, div_map, ncol = 2, nrow = 1)
+plot_grid(div_map, DF_map, ncol = 2, nrow = 1)
 ```
 
 ### Interpretation of visualization 2:
 
-  Certain States such as: Washington, Oregon, Nevada, Montana, Colorado, 
-Minnesota, Ohio, and Kentucky are shown in gray because out of confidentiality 
-and per state law, they are not allowed to provided clients' information, including the category of legal question they ask.
+By analyzing the quantity of divorce-related inquiries and their distribution across states, we can gain insights into the clients' backgrounds and identify the regions with the highest occurrence of divorce-related questions.
 
-  For the 42 states that allow the disclosure of client information, Texas and Florida clearly have the highest number of divorce-related legal questions being asked. However, the distribution of the divorce question frequency does paints a different picture. Texas and Florida no longer stand out when we measure the number of questions asked per 100,000 residents. Here, the states of Wyoming and Maine stand out as places where divorce-related legal advice is most frequently sought on the online platform.
+States like Washington, Oregon, Nevada, Montana, Colorado, North Dakota, Minnesota, Ohio, and Kentucky are depicted in gray on the chart due to legal requirements and confidentiality obligations. These states are prohibited from disclosing clients' information, including the specific category of legal questions they ask.
+
+Among the 42 states that permit the revealing of client details, Texas and Florida demonstrate the greatest volume of inquiries concerning divorce law. Nonetheless, the prevalence of divorce-related questions takes on a distinct pattern when analyzed differently. When considering the number of queries per 100,000 residents, Texas and Florida no longer appear exceptional. Instead, it is Wyoming and Maine that emerge as prominent locations where the rate of individuals frequently seeking online guidance regarding divorce matters are the highest.
 
 # Visualization 3: Financial Status Correlation with Divorce Rate
 
