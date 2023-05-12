@@ -111,14 +111,17 @@ top_subcats <- top_subcats %>%
   arrange(desc(num_subcats)) %>%
   head(15)
 ggplot(top_subcats, aes(x = num_subcats, y = reorder(Subcategory, num_subcats))) +
-  geom_bar(stat = "Identity", fill = "#00A19B") +
+  geom_segment(aes(xend = 0, yend = Subcategory), color = "#00A19B", linewidth = 3) +
+  geom_point(size = 5, color = "#000000", fill=alpha("#00A19B",0.5), alpha = 0.7, shape = 21, stroke = 2) +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1), plot.title = element_text(hjust = 0.5)) +
+  theme(axis.text.y = element_text(angle = 0, hjust = 1), plot.title = element_text(hjust = 0.5)) +
   labs(title = "Top 15 Subcategories",
        x = "Number of Clients",
-       y = "Subcategory")
+       y = "Subcategory") +
+  theme(axis.title.y = element_text(hjust=0.6))
 ```
-Interpretation:
+
+### Interpretation of visualization 1:
 
   For our project, we want to started off with investigating the most frequently asked legal questions subcategories so we can define a most common question type based on the data set we have at hand and use it as the theme of our research question. 
 
@@ -178,7 +181,8 @@ DF_map <- plot_usmap(data = dfDivorce, values = "distrib", color = "red") +
 
 plot_grid(DF_map, div_map, ncol = 2, nrow = 1)
 ```
-Interpretation:
+
+### Interpretation of visualization 2:
 
   Certain States such as: Washington, Oregon, Nevada, Montana, Colorado, 
 Minnesota, Ohio, and Kentucky are shown in gray because out of confidentiality 
@@ -266,7 +270,8 @@ PlotAllowed <- ggplot(data = data_noOutlier, aes(x = AllowedIncome , y = Marital
 plot_grid(PlotAnnual, PlotAllowed, ncol = 1, nrow = 2)
 plot_grid(PlotCheckings, PlotSavings, ncol = 1, nrow = 2)
 ```
-Interpretation: 
+
+### Interpretation of visualization 3:
   
   From the above visualization, we can see that the annual income of clients asking divorce-related questions is higher on average compared to other clients. The exception is in the married/remarried category, which itself exhibits higher annual income than other marital statuses across both question categories. The states also recognize this discrepancy and generally allow higher income married individuals to ask pro bono questions. That is, the allowed income is noticeably higher for married or remarried people compared to other marital statuses. If someone wishes to ask a divorce-related question, we can also see that if they do not wish to disclose their marital status, their allowed income to ask a question free of charge drops. 
   
@@ -385,8 +390,8 @@ WHAT WE NEED TO FINISH:
 - Explain our log odds
 - Explain Confidence interval   
 - Discuss the positive predictor and negative predictor variables (in reference to FL and Single)
-- Suggestion based on limitations , missing data = limitation, states didn't provide data, also some states didn't have Divorce as a subcategory (such as California and the states that are white in viz 2)
-- Ask whether visualizations meet the requirements (maybe need to change viz 1 to something different.)
+- Write the summary
+  - Suggestion based on limitations , missing data = limitation, states didn't provide data, also some states didn't have Divorce as a subcategory (such as California and the states that are white in viz 2)
 
 - SIGN THE FORM SO WE'RE GRADED!!!
    
