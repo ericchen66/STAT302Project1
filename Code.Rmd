@@ -422,19 +422,31 @@ accuracy <- ((acc_table[1] + acc_table[4])/sum(acc_table))*100
 print(paste0("The accuracy of our best model was: ", round(accuracy, 2), "%."))
 ```
 
-# Conclusions
+# Summary & Conclusions
 
 Based on the odds ratios obtained from our top-performing model, it is evident that clients hailing from South Dakota, Maine, and Hawaii exhibit approximately double the likelihood of inquiring about divorce-related matters in comparison to our chosen reference state, Florida. We selected Florida as our reference state due to its significant population, social and economic influence, while having a relatively modest frequency of divorce-related queries. By excluding states without any recorded divorce-related questions, it becomes apparent that Indiana and Nebraska have notably lower rates of such inquiries compared to other states. The odds ratio, slightly exceeding 0.2, indicates that clients from these two states have approximately one-fifth the likelihood of asking a divorce-related question compared to clients from Florida, holding all other variables constant. It is important to note that although numerous states provide client data, many lack sufficient information to draw statistically significant conclusions. However, none of the aforementioned states fall into this category.
 
-Apart from the state of origin, the variables of age, family size, and marital status exhibit significant predictive power in determining whether a client will inquire about divorce-related matters. According to the odds ratio, for each passing year, the likelihood of a client's question being related to divorce decreases by approximately 0.96, holding all other variables constant. All marital statuses, except for "widow," exhibit odds ratios greater than 1, indicating an increased likelihood of divorce-related questions compared to our reference group, "single." Notably, being "separated" raises the odds by nearly a factor of 13, while holding all other variables constant. This aligns with the expectation that clients seeking divorce advice are more likely to be in strained relationships, while being single suggests an absence of a relationship altogether.
+Apart from the state of origin, the variables of age, family size, and marital status exhibit significant predictive power in determining whether a client will inquire about divorce-related matters. According to the odds ratio, for each passing year, the likelihood of a client's question being related to divorce decreases by approximately 0.96, holding all other variables constant. All marital statuses, except for "widow," exhibit odds ratios greater than 1, indicating an increased likelihood of divorce-related questions compared to our reference group, "single." Notably, being "separated" raises the odds by nearly a factor of 13, while holding all other variables constant. This aligns with the expectation that clients seeking divorce advice are more likely to be in strained relationships, while being single suggests an absence of a relationship altogether. In conclusion, the balances of both checking and savings accounts have a strong predictive influence on the category of questions a client may ask. Conversely, we did not observe any predictive capability regarding a client's annual income.
 
-In conclusion, the balances of both checking and savings accounts have a strong predictive influence on the category of questions a client may ask. Conversely, we did not observe any predictive capability regarding a client's annual income.
+The key lesson we learned from this assignment is that statistical computing has the potential to be applied in professional domains for predicting trends and effectively allocating resources. Going beyond the project's requirements and outcomes, we believe the American Bar Association could employ the models we developed to determine the states requiring more divorce lawyers and collaborate with state governments accordingly. While our data was limited to lower-income individuals and pro bono attorneys, we suspect that the trends we identified are indicative of other income brackets and paid attorneys on a broader scale. However, the most significant constraint we faced in exploring our research question was the insufficient data from certain states and the apparent disparity in data availability among other states. 
 
-# Summary
+Another crucial lesson we learned from this project is the significance of establishing a clear objective when dealing with unorganized data. If our team had blindly utilized the given csv files to develop models and visualizations without initially structuring the data, we would have encountered substantial delays in extracting meaningful insights. Additionally, we would have faced the risk of decreased accuracy due to the presence of NULL values and outliers. Given the extensive volume of data at our disposal, it becomes even more crucial to formulate specific research questions early on and filter the data accordingly. We consider this concept invaluable across various research domains, as the majority of datasets contain far more information than what is necessary for drawing significant conclusions.
 
-Eric: My main takeaway from this assignment is that statistical computing could be utilized in professional fields to predict trends and allocate resources accordingly. Extending beyond the requirements and results of this project, I think the American Bar Association could rely on the models we created to decide which states need more divorce lawyers and collaborate accordingly with state governments on the matter. Although we were limited to data collected on lower-income individuals and volunteer attorneys, I suspect the trends we discovered reflect other income brackets as well. However, by far the biggest limitation with exploring our research question was the lack of data from some states, and the seemingly uneven availability of data among other states. For instance, the client data set we worked with only recorded one client from Idaho, essentially nullifying it entirely. The fact that California only recorded twice as many questions as Wyoming, a state about one-eightieth the population, is also concerning. 
+After examining various scientific literature, we were unable to find any studies that reported similar findings related to our research question. However, we did successfully explore different sets of literature concerning the factors that contribute to accurately predicting divorce. This exploration is relevant to our goal of understanding our predictive power in divorce-related legal matters. Specifically, the National Institutes of Health (NIH) published an article discussing the risks of predicting divorce without conducting proper crossvalidation analyses and sensitivity tests. They concluded that "exceptional initial predictive results can assist us in enhancing models by identifying significant risk factors" [1]. This conclusion allows us to better evaluate the accuracy of our predictive model. Although we achieved a 74.75% success rate in predicting divorce-related queries from clients, it is important to conduct thorough crossvalidation and sensitivity testing to avoid overestimating the model's predictive capabilities. Instead, we should focus on the model's ability to identify crucial and meaningful predictors.
 
-What I also grasped from completing this project is the importance of formulating a goal in mind early when working with messy data. Had my group blindly used the provided csv files to create our models and visualizations without first organizing the data, we would have spent much longer trying to pluck the results for something insightful, not to mention the loss of accuracy that may result from NULL values and outliers. With such a large quantity of data at our disposal, it becomes more important that we come up with specific questions we want to investigate early on and filter the data accordingly. As a student currently taking a GIS course, I find this idea to be invaluable in both fields, as I have learned that most online data provides much more than what is necessary.
+Like any dataset and research inquiry, there are constraints that can impact the overall predictive capability of a research model. In the case of the dataset obtained from the American Bar Association pro bono service, we discovered that a select few states, precisely ten, lacked the provision of clients' demographic information. Consequently, during the data cleansing process where we merged and joined the dataframes using the unique identifier for each client, we were unable to obtain any client data for 20% of the United States. This poses a challenge as we cannot predict the legal queries of clients in those specific ten states based on their demographic background. Nevertheless, since we have excluded those states from our dataset, we can confidently affirm that we possess significant predictive power for clients residing in states that did provide client demographics.
+
+We encountered another limitation during our research. We found that the states of California, Idaho, South Carolina, and Wisconsin did not classify the client's legal questions related to divorce into specific subcategories. Instead, they grouped them under broader categories like Family and Children. As a result, we couldn't determine the extent to which clients in those states sought divorce-related information. However, since these states didn't provide any divorce-related data, similar to the previous limitation, we can assert with confidence that our model has significant predictive capability for clients in states where categorical data on divorces was available. Overall, we are confident that our model can accurately predict outcomes with approximately 75% accuracy for around 72% of the United States.
+
+
+
+
+
+
+
+[1] Heyman RE, Smith Slep AM. The Hazards of Predicting Divorce Without Crossvalidation. J Marriage Fam. 2001 May;63(2):473-479. doi: 10.1111/j.1741-3737.2001.00473.x. PMID: 17066126; PMCID: PMC1622921.
+
+
 
 # COMMENTS
 
@@ -443,19 +455,15 @@ What I also grasped from completing this project is the importance of formulatin
 WHAT WE NEED TO FINISH:
 
 - Write the summary
-  - Suggestion based on limitations , missing data = limitation, states didn't provide data, also some states didn't have Divorce as a subcategory (such as California and the states that are white in viz 2)
+
 
 FROM PRINCE'S PROJECT EXPECTATIONS:
 
-• Executive summary of your results, your main takeaways and what you
-learned completing this project.  
-• Findings consistent with literature (if any).  
-• Any limitations.  
-• Suggestions (usually based on limitations) and/or recommendations.  
+ 
+* Suggestions (usually based on limitations) and/or recommendations.  
 
 * Finish Confidence interval and odds ratio interpretation, please readjust when needed,
-* Ask Prince whether our odds ratio and confidence interval interpretation is valid,
-* ask for further suggestions if there are any
+
 
    
    
