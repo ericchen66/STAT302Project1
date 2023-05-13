@@ -405,7 +405,7 @@ exp(cbind(OR = coef(model1), confint.default(model1)))
 
 ### Accuracy of Best Model
 
-Based on the classification table below, our optimal model accurately predicted 37,840 out of 50,620 total observations.
+Based on the classification table below, our optimal model accurately predicted 32,840 out of 50,620 total observations.
 
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 # Accuracy Table
