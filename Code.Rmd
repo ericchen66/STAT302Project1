@@ -355,8 +355,7 @@ model_comparison <- compareGLM(model1, model2, model3, model4, model5)
 
 To identify the optimal model, we assessed the Akaike Information Criterion (AIC) and Bayesian Information Criterion (BIC) values associated with the five logistic regression models we constructed. 
 
-Based on the principle that model selection criteria strike a balance between goodness of fit and model complexity, it is known that AIC tends to favor more complex models, whereas BIC penalizes complexity more rigorously. Lower values of AIC or BIC indicate a better fit. By examining the chart, we note that the lowest AIC and BIC values correspond to our initial model, which included all the independent variables discussed in our research question.  
-Therefore we selected model 1 as it had both the lowest AIC and BIC scores. AIC is a better indicator to use in answering our research question, as it maximizes the predictive power of the data for any future data. However, since both the AIC and BIC values agree on which model out of the five we created is the best, we can safely choose model 1 moving forward.
+Based on the principle that model selection criteria strike a balance between goodness of fit and model complexity, it is known that AIC tends to favor more complex models, whereas BIC penalizes complexity more rigorously. Lower values of AIC or BIC indicate a better fit. By examining the chart, we note that the lowest AIC and BIC values correspond to our initial model, which included all the independent variables discussed in our research question. Therefore we selected model 1 as it had both the lowest AIC and BIC scores. AIC is a better indicator to use in answering our research question, as it maximizes the predictive power of the data for any future data. However, since both the AIC and BIC values agree on which model out of the five we created is the best, we can safely choose model 1 moving forward.
 
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 model_comparison[1]
@@ -365,7 +364,7 @@ model_comparison[2]
 
 ### Summary of best model
 
-With reference to the state of residence of Florida and marital status of Single, we can identify the positive predictor and negative predictor variables to be:
+By considering Florida as the state of residence reference and being single as the marital status reference, we can determine the predictors that positively and negatively influence the model.
 
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 coeff_pos <- model1$coefficients[model1$coefficients >= 0]
@@ -374,35 +373,39 @@ coeff_neg <- model1$coefficients[model1$coefficients < 0]
 coeff_neg
 ```
 
-```{r eval= TRUE, include=FALSE, echo=FALSE}
+The predictors deemed statistically significant with a confidence level of 5% are:
+
+```{r eval= TRUE, include=TRUE, echo=FALSE}
 # The predictors that are considered significant at the 5% level of confidence are:
 mod_summ <- data.frame(summary(model1)$coef[summary(model1)$coef[,4] <= .05, 4])
 print(paste0(row.names(mod_summ)))
-```
-
-The summary of our best model is displayed below.
-
-```{r eval= TRUE, include=TRUE, echo=FALSE}
-summary(model1)
 ```
 
 ### Odds ratio and confidence intervals for the best model
 
 By considering Florida as the reference state and Single as the reference marital status, we can discern significant associations between the response variable and the corresponding covariates while keeping all other variables constant. For example, in comparison to single clients, those who are separated exhibited considerably higher odds (OR = 12.9, 95% CI = 11.9-14.1) of inquiring about divorce-related matters. In terms of percentage change, the likelihood of a separated client posing divorce-related questions is approximately 1190% greater than that of a single client.
 
-For Age, after adjusting for all the confounders (Locations(state), number in household, marital status, annual income, savings balance, checking balance, allowed income) the odd ratio is 0.9598004, with 95% CI being 0.9579366 and 0.9616678.  The confidence interval did not cross 1, which means there is difference between clients of different age when it comes to the odds of asking questions related to divorce. This means that the odds of client asking question related to divorce will decrease by 4.01996% for every unit increases of client’s age. 
+For Age, after adjusting for all the confounders (Locations(state), number in household, marital status, annual income, savings balance, checking balance, allowed income) the odd ratio is 0.956, with 95% CI being 0.958 and 0.962.  The confidence interval did not cross 1, which means there is difference between clients of different age when it comes to the odds of asking questions related to divorce. This means that the odds of client asking question related to divorce will decrease by 4.40% for every unit increases of client’s age. 
 
-For Number in Household, after adjusting for all the confounders (Locations(state), age, marital status, annual income, savings balance, checking balance, allowed income) the odd ratio is 1.085273, with 95% CI being 1.070469 and 1.100282.  The confidence interval did not cross 1, which means there is a difference between clients with different number of people in household, so it’s significant for our prediction. This means that the odds of client asking question related to divorce will increase by 8.5273% for every unit increases of number of people in client’s household with true population effect between 7.0469% and 10.0282% . 
 
-For Annual Income, after adjusting for all the confounders (Locations(state), number in household, age, marital status, savings balance, checking balance, allowed income) the odd ratio is 0.999, with 95% CI being 0.9999988 and 1.0000001.  The confidence interval crossed 1, which means there is no difference between clients with different annual income so it’s not significant for our prediction. 
+####
 
-For savings balance, after adjusting for all the cofounders, the odd ratio is 0.999815, with 95% CI being 0.999727 and 0.999903. The confidence interval did not cross 1, which means there is difference between clients of different saving balance when it comes to the odds of asking questions related to divorce. This means that the odds of client asking question related to divorce will decrease by 0.0184% for every unit increases of client’s savings balance with true population effect between 0.0273% and 0.00096%.
+After controlling for all potential influencing factors, the odds ratio (OR) for Age was found to be 0.956 (95% CI = 0.958-0.962). The confidence interval, which does not overlap with 1, indicates a significant variation in the likelihood of clients asking questions about divorce based on their age. Specifically, for each unit increase in a client's age, the odds of them inquiring about divorce decrease by 4.40%.
 
-For checking balance, the odd ratio is 0.9999607, with 95% CI being 0.9999437 and 0.9999777. The confidence interval did not cross 1, which means there is difference between clients of different checking balance when it comes to the odds of asking questions related to divorce. The influence of checking balance on the odds of clients asking divorce related question is equally weak as that of saving balance
+####
 
-For state, let’s take Hawaii(StateAbbrHI) as an example, after adjusting for all the cofounders(Age, number in household, marital status, annual income, savings balance, checking balance, allowed income) the odds ratio is 2.210330 with 95% CI being 1.849611 to 2.641399. The confidence interval did not cross 1, which means there is difference between clients from Hawaii and  different states when it comes to the odds of asking questions related to divorce.  This means that the odds for clients from the state of Hawaii to ask question related divorce is 2.21 times more likely than the clients from other states, with the true population effect between 1.849611 to 2.641399.  
 
-On the other hand, the state Georgia(StateAbbrGA), after adjusting for all the cofounders(Age, number in household, marital status, annual income, savings balance, checking balance, allowed income) the odds ratio is  0.9450271 with 95% CI being 0.8390611 to 1.064376. The confidence interval did cross 1, which means there is no difference between clients from Georgia and other different states when it comes to the odds of asking questions related to divorce. 
+For Number in Household, after adjusting for all the confounders (Locations(state), age, marital status, annual income, savings balance, checking balance, allowed income) the odd ratio is 1.09, with 95% CI being 1.07 and 1.10.  The confidence interval did not cross 1, which means there is a difference between clients with different number of people in household, so it’s significant for our prediction. This means that the odds of client asking question related to divorce will increase by 9% for every unit increases of number of people in client’s household with true population effect between 7% and 10%. 
+
+For Annual Income, after adjusting for all the confounders (Locations(state), number in household, age, marital status, savings balance, checking balance, allowed income) the odd ratio is 0.999, with 95% CI being 0.999 and 1.00. The confidence interval crossed 1, which means there is no difference between clients with different annual income so it’s not significant for our prediction. 
+
+For savings balance, after adjusting for all the cofounders, the odd ratio is 0.99, with 95% CI being 0.99 and 0.99. The confidence interval did not cross 1, which means there is difference between clients of different saving balance when it comes to the odds of asking questions related to divorce. This means that the odds of client asking question related to divorce will decrease by 1% for every unit increases of client’s savings balance with true population effect between 0.0273% and 0.00096%. ####
+
+For checking balance, the odd ratio is 0.99, with 95% CI being 0.99 and 0.99. The confidence interval did not cross 1, which means there is difference between clients of different checking balance when it comes to the odds of asking questions related to divorce. The influence of checking balance on the odds of clients asking divorce related question is equally weak as that of saving balance.  ####
+
+For state, let’s take Hawaii(StateAbbrHI) as an example, after adjusting for all the cofounders(Age, number in household, marital status, annual income, savings balance, checking balance, allowed income) the odds ratio is 2.21 with 95% CI being 1.85 to 2.64. The confidence interval did not cross 1, which means there is difference between clients from Hawaii and  different states when it comes to the odds of asking questions related to divorce.  This means that the odds for clients from the state of Hawaii to ask question related divorce is 2.21 times more likely than the clients from other states, with the true population effect between 1.85 to 2.64.  
+
+On the other hand, the state Georgia(StateAbbrGA), after adjusting for all the cofounders(Age, number in household, marital status, annual income, savings balance, checking balance, allowed income) the odds ratio is  0.95 with 95% CI being 0.84 to 1.06. The confidence interval did cross 1, which means there is no difference between clients from Georgia and other different states when it comes to the odds of asking questions related to divorce. 
 
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 # Using Standard Errors
@@ -432,40 +435,12 @@ The key lesson we learned from this assignment is that statistical computing has
 
 Another crucial lesson we learned from this project is the significance of establishing a clear objective when dealing with unorganized data. If our team had blindly utilized the given csv files to develop models and visualizations without initially structuring the data, we would have encountered substantial delays in extracting meaningful insights. Additionally, we would have faced the risk of decreased accuracy due to the presence of NULL values and outliers. Given the extensive volume of data at our disposal, it becomes even more crucial to formulate specific research questions early on and filter the data accordingly. We consider this concept invaluable across various research domains, as the majority of datasets contain far more information than what is necessary for drawing significant conclusions.
 
-After examining various scientific literature, we were unable to find any studies that reported similar findings related to our research question. However, we did successfully explore different sets of literature concerning the factors that contribute to accurately predicting divorce. This exploration is relevant to our goal of understanding our predictive power in divorce-related legal matters. Specifically, the National Institutes of Health (NIH) published an article discussing the risks of predicting divorce without conducting proper crossvalidation analyses and sensitivity tests. They concluded that "exceptional initial predictive results can assist us in enhancing models by identifying significant risk factors" [1]. This conclusion allows us to better evaluate the accuracy of our predictive model. Although we achieved a 74.75% success rate in predicting divorce-related queries from clients, it is important to conduct thorough crossvalidation and sensitivity testing to avoid overestimating the model's predictive capabilities. Instead, we should focus on the model's ability to identify crucial and meaningful predictors.
-
 Like any dataset and research inquiry, there are constraints that can impact the overall predictive capability of a research model. In the case of the dataset obtained from the American Bar Association pro bono service, we discovered that a select few states, precisely ten, lacked the provision of clients' demographic information. Consequently, during the data cleansing process where we merged and joined the dataframes using the unique identifier for each client, we were unable to obtain any client data for 20% of the United States. This poses a challenge as we cannot predict the legal queries of clients in those specific ten states based on their demographic background. Nevertheless, since we have excluded those states from our dataset, we can confidently affirm that we possess significant predictive power for clients residing in states that did provide client demographics.
 
 We encountered another limitation during our research. We found that the states of California, Idaho, South Carolina, and Wisconsin did not classify the client's legal questions related to divorce into specific subcategories. Instead, they grouped them under broader categories like Family and Children. As a result, we couldn't determine the extent to which clients in those states sought divorce-related information. However, since these states didn't provide any divorce-related data, similar to the previous limitation, we can assert with confidence that our model has significant predictive capability for clients in states where categorical data on divorces was available. Overall, we are confident that our model can accurately predict outcomes with approximately 75% accuracy for around 72% of the United States.
 
+A potential strategy to address the constraints mentioned earlier involves incorporating predictor variables that encompass the entirety of the United States, instead of solely relying on data from particular states. This approach would enable us to accurately predict the client's legal inquiries nationwide, without the need to specify the states for which we possess accurate predictions. Another option could be for the American Bar Association (ABA) to mandate that states provide their data within a nationwide framework, guaranteeing consistent consideration of demographics and legal query categories.
 
-
-
-
-
+After examining various scientific literature, we were unable to find any studies that reported similar findings related to our research question. However, we did successfully explore different sets of literature concerning the factors that contribute to accurately predicting divorce. This exploration is relevant to our goal of understanding our predictive power in divorce-related legal matters. Specifically, the National Institutes of Health (NIH) published an article discussing the risks of predicting divorce without conducting proper crossvalidation analyses and sensitivity tests. They concluded that "exceptional initial predictive results can assist us in enhancing models by identifying significant risk factors" [1]. This conclusion allows us to better evaluate the accuracy of our predictive model. Although we achieved a 74.75% success rate in predicting divorce-related queries from clients, it is important to conduct thorough crossvalidation and sensitivity testing to avoid overestimating the model's predictive capabilities. Instead, we should focus on the model's ability to identify crucial and meaningful predictors.
 
 [1] Heyman RE, Smith Slep AM. The Hazards of Predicting Divorce Without Crossvalidation. J Marriage Fam. 2001 May;63(2):473-479. doi: 10.1111/j.1741-3737.2001.00473.x. PMID: 17066126; PMCID: PMC1622921.
-
-
-
-# COMMENTS
-
-
-
-WHAT WE NEED TO FINISH:
-
-- Write the summary
-
-
-FROM PRINCE'S PROJECT EXPECTATIONS:
-
- 
-* Suggestions (usually based on limitations) and/or recommendations.  
-
-* Finish Confidence interval and odds ratio interpretation, please readjust when needed,
-
-
-   
-   
-
-  
