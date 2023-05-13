@@ -271,7 +271,9 @@ Based on the aforementioned visualization, it becomes apparent that clients seek
 On average, clients seeking divorce-related guidance tend to have lower checking and savings balances compared to clients with different types of inquiries. Among all marital statuses seeking divorce advice, individuals who are divorced possess the highest average checking balance, while those who are widowed have the lowest. This observation is intriguing as both statuses imply that the person does not currently have a partner. Clients with similar statuses, such as single or separated, have checking balances that fall between those of widowed and divorced individuals. However, regardless of the legal advice they seek, single and separated clients generally do not maintain high balances in their savings accounts. In contrast to the data on annual/allowed income, married clients do not exhibit significantly higher checking or savings balances compared to other clients, except for the savings balance of clients seeking non-divorce-related legal advice.
 
 
-# Research question: Can we derive significant predictive ability by assessing clients' background, including their financial circumstances, relationship status, and state of residence, to determine whether their legal question will be related to divorce?
+# Research question: 
+
+Can we derive significant predictive ability by assessing clients' background, including their financial circumstances, relationship status, and state of residence, to determine whether their legal question will be related to divorce?
 
 The objective of this research inquiry is to accurately forecast whether a client will seek legal assistance related to divorce or another area based solely on their background information, encompassing finances, relationship status, and residential location. In this study, we propose that the dependent variable is binary, representing whether the client poses a divorce-related question or not. Meanwhile, the independent or predictor variables encompass the client's age, marital status, state of residence, household size, annual income, as well as checking and savings balances.
 
