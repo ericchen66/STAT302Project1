@@ -364,8 +364,8 @@ model_comparison[2]
 Logistic Regression for our best model: 
 Log odds of asking question related to divorce = -0.04103 * Age - 1.849e-05 * SavingsBalance - 1.214e-07 * AnnualIncome - 3.932e-05 * CheckingBalance + 2.987e-02 + (coefficient of StateAbbr) + (coefficient of  MaritalStatus)
 
-Note: There are multiple cases of regression depend on the reference group of the factored categorical varaibles
-StateAbbr and MaritalStatus.
+Note: There are multiple cases of regression depend on the reference group of the factored categorical variables StateAbbr and MaritalStatus.
+
 ### Summary of best model
 
 By considering Florida as the state of residence reference and being single as the marital status reference, we can determine the predictors that positively and negatively influence the model.
