@@ -385,25 +385,19 @@ print(paste0(row.names(mod_summ)))
 
 ### Odds ratio and confidence intervals for the best model
 
-By considering Florida as the reference state and Single as the reference marital status, we can discern significant associations between the response variable and the corresponding covariates while keeping all other variables constant. For example, in comparison to single clients, those who are separated exhibited considerably higher odds (OR = 12.9, 95% CI = 11.9-14.1) of inquiring about divorce-related matters. In terms of percentage change, the likelihood of a separated client posing divorce-related questions is approximately 1190% greater than that of a single client.
+By considering Florida as the reference state and Single as the reference marital status, we can discern significant associations between the response variable and the corresponding covariates while keeping all other variables constant. 
 
-For Age, after adjusting for all the confounders (Locations(state), number in household, marital status, annual income, savings balance, checking balance, allowed income) the odd ratio is 0.956, with 95% CI being 0.958 and 0.962.  The confidence interval did not cross 1, which means there is difference between clients of different age when it comes to the odds of asking questions related to divorce. This means that the odds of client asking question related to divorce will decrease by 4.40% for every unit increases of client’s age. 
+For example, in comparison to single clients, those who are separated exhibited considerably higher odds (OR = 12.9, 95% CI = 11.9-14.1) of inquiring about divorce-related matters. In terms of percentage change, the likelihood of a separated client posing divorce-related questions is approximately 1190% greater than that of a single client.
 
-
-####
-
-After controlling for all potential influencing factors, the odds ratio (OR) for Age was found to be 0.956 (95% CI = 0.958-0.962). The confidence interval, which does not overlap with 1, indicates a significant variation in the likelihood of clients asking questions about divorce based on their age. Specifically, for each unit increase in a client's age, the odds of them inquiring about divorce decrease by 4.40%.
-
-####
-
+The odds ratio (OR) for Age was found to be 0.956 (95% CI = 0.958-0.962). The confidence interval, which does not overlap with 1, indicates a significant variation in the likelihood of clients asking questions about divorce based on their age. Specifically, for each unit increase in a client's age, the odds of them inquiring about divorce decrease by 4.40%.
 
 For Number in Household, after adjusting for all the confounders (Locations(state), age, marital status, annual income, savings balance, checking balance, allowed income) the odd ratio is 1.09, with 95% CI being 1.07 and 1.10.  The confidence interval did not cross 1, which means there is a difference between clients with different number of people in household, so it’s significant for our prediction. This means that the odds of client asking question related to divorce will increase by 9% for every unit increases of number of people in client’s household with true population effect between 7% and 10%. 
 
 For Annual Income, after adjusting for all the confounders (Locations(state), number in household, age, marital status, savings balance, checking balance, allowed income) the odd ratio is 0.999, with 95% CI being 0.999 and 1.00. The confidence interval crossed 1, which means there is no difference between clients with different annual income so it’s not significant for our prediction. 
 
-For savings balance, after adjusting for all the cofounders, the odd ratio is 0.99, with 95% CI being 0.99 and 0.99. The confidence interval did not cross 1, which means there is difference between clients of different saving balance when it comes to the odds of asking questions related to divorce. This means that the odds of client asking question related to divorce will decrease by 1% for every unit increases of client’s savings balance with true population effect between 0.0273% and 0.00096%. ####
+For savings balance, after adjusting for all the cofounders, the odd ratio is 0.99, with 95% CI being 0.99 and 0.99. The confidence interval did not cross 1, which means there is difference between clients of different saving balance when it comes to the odds of asking questions related to divorce. This means that the odds of client asking question related to divorce will decrease by 1% for every unit increases of client’s savings balance with true population effect between 0.0273% and 0.00096%.
 
-For checking balance, the odd ratio is 0.99, with 95% CI being 0.99 and 0.99. The confidence interval did not cross 1, which means there is difference between clients of different checking balance when it comes to the odds of asking questions related to divorce. The influence of checking balance on the odds of clients asking divorce related question is equally weak as that of saving balance.  ####
+For checking balance, the odd ratio is 0.99, with 95% CI being 0.99 and 0.99. The confidence interval did not cross 1, which means there is difference between clients of different checking balance when it comes to the odds of asking questions related to divorce. The influence of checking balance on the odds of clients asking divorce related question is equally weak as that of saving balance.
 
 For state, let’s take Hawaii(StateAbbrHI) as an example, after adjusting for all the cofounders(Age, number in household, marital status, annual income, savings balance, checking balance, allowed income) the odds ratio is 2.21 with 95% CI being 1.85 to 2.64. The confidence interval did not cross 1, which means there is difference between clients from Hawaii and  different states when it comes to the odds of asking questions related to divorce.  This means that the odds for clients from the state of Hawaii to ask question related divorce is 2.21 times more likely than the clients from other states, with the true population effect between 1.85 to 2.64.  
 
