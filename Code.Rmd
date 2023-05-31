@@ -175,18 +175,18 @@ DF_map <- plot_usmap(data = dfDivorce, values = "distrib", color = "red", labels
 DF_map$layers[[2]]$aes_params$size <- 2
 
 plot_grid(div_map, DF_map, ncol = 2, nrow = 1)
-```
 
-```{r}
+
+
+
+
+# Might need to use this if we try to move the overlapping state labels
 states <- data.frame(state.abb)
 statesLoc <- data.frame(state.center)
 usData <- cbind(states, statesLoc)
 colnames(usData) <- c("state", "lat", "long")
+
 ```
-
-
-
-
 
 ### Interpretation of visualization 2:
 
@@ -276,6 +276,129 @@ PlotAllowed <- ggplot(data = data_noOutlier, aes(x = AllowedIncome , y = Marital
 plot_grid(PlotAnnual, PlotAllowed, ncol = 1, nrow = 2)
 plot_grid(PlotCheckings, PlotSavings, ncol = 1, nrow = 2)
 ```
+
+
+
+
+
+
+
+
+###############TESTING VISUALIZATION 3
+
+```{r eval= TRUE, include=TRUE, echo=FALSE, warning = FALSE, message=FALSE}
+
+# Visualization 3
+
+# Get rid of outliers
+quartiles <- quantile(data_overall$AnnualIncome, probs=c(.25, .75), na.rm = FALSE)
+IQR <- IQR(data_overall$AnnualIncome)
+Lower <- quartiles[1] - 1.5*IQR
+Upper <- quartiles[2] + 1.5*IQR
+
+# Investigating the correlation between 
+data_noOutlier <- subset(data_overall, AnnualIncome > Lower & AnnualIncome < Upper)
+
+
+# Data cleaning, select the top 5 Marital status
+top_status <- data_noOutlier %>%
+  group_by(MaritalStatus) %>%
+  summarise(num_status = n()) %>%
+  ungroup()
+numtop_status <- top_status %>%
+  arrange(desc(num_status)) %>%
+  head(5)
+
+
+data_noOutlier <- data_noOutlier %>%
+  filter(data_noOutlier$AnnualIncome > 0)
+
+data_noOutlier <- subset(data_noOutlier, MaritalStatus %in% c("Single", "Married / remarried", "Divorced or Widowed", "Separated","I'd rather not answer"))
+
+# Create facet titles
+Subcategory.labs <- c("Divorce", "Other")
+names(Subcategory.labs) <- c("1", "0")
+
+
+
+
+
+
+#   Box plot of median annual income level of people of top 5 marital status
+#   Faceted by subcategory 
+PlotAnnual <- ggplot(data = data_noOutlier, aes(x = AnnualIncome , y = MaritalStatus, fill 
+                                  = MaritalStatus)) +
+  geom_boxplot() +
+  labs(x = "Annual Income",
+       y = "Marital Status",
+       title = "Client Marital Status and Annual Income, 
+       Split by Divorce Related Questions/Other Questions") +
+  facet_wrap(~ Subcategory, labeller = labeller(Subcategory = Subcategory.labs)) +
+  theme_bw(base_size = 10) +
+  theme(plot.title =
+          element_text(hjust = 0.5), legend.position = "none") +
+  coord_cartesian(xlim = c(0, 75000))
+
+
+
+#   Box plot of median checking balance level of people of top 5 marital status
+#   Faceted by subcategory 
+PlotAllowed <- ggplot(data = data_noOutlier, aes(x = AllowedIncome , y = MaritalStatus, fill 
+                                  = MaritalStatus)) +
+  geom_boxplot() +
+  labs(x = "Allowed Income",
+       y = "Marital Status",
+       title = "Client Marital Status and Allowed Income, 
+       Split by Divorce Related Questions/Other Questions") +
+  facet_wrap(~ Subcategory, labeller = labeller(Subcategory = Subcategory.labs)) +
+  theme_bw(base_size = 10) +
+  theme(plot.title =
+          element_text(hjust = 0.5), legend.position = "none")+
+  coord_cartesian(xlim = c(0, 75000))
+
+
+
+
+#   Box plot of median checking balance level of people of top 5 marital status
+#   Faceted by subcategory 
+PlotCheckings <- ggplot(data = data_noOutlier, aes(x = CheckingBalance , y = MaritalStatus, fill 
+                                  = MaritalStatus)) +
+  geom_boxplot() +
+  labs(x = "Checking Balance",
+       y = "Marital Status",
+       title = "Client Marital Status and Checking Balance, 
+       Split by Divorce Related Questions/Other Questions") +
+  facet_wrap(~ Subcategory, labeller = labeller(Subcategory = Subcategory.labs)) +
+  theme_bw(base_size = 10) +
+  theme(plot.title =
+          element_text(hjust = 0.5), legend.position = "none") +
+  coord_cartesian(xlim = c(-600, 1200))
+
+
+#   Box plot of median savings balance level of people of top 5 marital status
+#   Faceted by subcategory 
+PlotSavings <- ggplot(data = data_noOutlier, aes(x = SavingsBalance , y = MaritalStatus, fill 
+                                  = MaritalStatus)) +
+  geom_boxplot() +
+  labs(x = "Savings Balance",
+       y = "Marital Status",
+       title = "Client Marital Status and Savings Balance, 
+       Split by Divorce Related Questions/Other Questions") +
+  facet_wrap(~ Subcategory, labeller = labeller(Subcategory = Subcategory.labs)) +
+  theme_bw(base_size = 10) +
+  theme(plot.title =
+          element_text(hjust = 0.5), legend.position = "none") +
+  coord_cartesian(xlim = c(-600, 1200))
+
+
+
+
+plot_grid(PlotAnnual, PlotAllowed, ncol = 1, nrow = 2)
+plot_grid(PlotCheckings, PlotSavings, ncol = 1, nrow = 2)
+```
+
+
+
 
 ### Interpretation of visualization 3:
 
