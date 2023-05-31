@@ -109,13 +109,13 @@ top_subcats <- questions %>%
   ungroup()
 top_subcats <- top_subcats %>%
   arrange(desc(num_subcats)) %>%
-  head(15)
+  head(5)
 ggplot(top_subcats, aes(x = num_subcats, y = reorder(Subcategory, num_subcats))) +
   geom_segment(aes(xend = 0, yend = Subcategory), color = "#00A19B", linewidth = 3) +
   geom_point(size = 5, color = "#000000", fill=alpha("#00A19B",0.5), alpha = 0.7, shape = 21, stroke = 2) +
   theme_minimal() +
   theme(axis.text.y = element_text(angle = 0, hjust = 1), plot.title = element_text(hjust = 0.5)) +
-  labs(title = "Top 15 Subcategories",
+  labs(title = "Top 5 Subcategories",
        x = "Number of Clients",
        y = "Subcategory") +
   theme(axis.title.y = element_text(hjust=0.6))
@@ -141,7 +141,7 @@ divorce_distrib <- as.data.frame(contingency)
 colnames(divorce_distrib)[which(names(divorce_distrib) == "Var1")] <- "state"
 # Selects the number of divorces per state
 divorce_plot <- divorce_distrib[divorce_distrib$Var2 != 0, ] 
-# Changes state variable back to charcter
+# Changes state variable back to character
 divorce_plot$state <- as.character(divorce_plot$state)
 # Retrieve state populations and rename abbr column to state
 states_pop <- statepop
@@ -149,12 +149,14 @@ states_pop <- states_pop %>%
   rename("state" = "abbr")
 
 # Plots the distribution of divorces in each state
-div_map <- plot_usmap(data = divorce_plot, values = "Freq", color = "red") + 
+div_map <- plot_usmap(data = divorce_plot, values = "Freq", color = "red", labels=TRUE) + 
   scale_fill_continuous(
     low = "white", high = "red", name = "Number of Questions"
     , label = scales::comma) + 
   theme(legend.position = "bottom", plot.title = element_text(hjust = 0.5)) +
   labs(title = "Number of divorce related questions")
+
+div_map$layers[[2]]$aes_params$size <- 2
 
 # Merge the population data with divorce data
 dfDivorce <- left_join(states_pop, divorce_plot, join_by("state")) %>%
@@ -162,7 +164,7 @@ dfDivorce <- left_join(states_pop, divorce_plot, join_by("state")) %>%
   mutate(distrib = ((Freq/pop_2015)*100000)) %>%
   select(-Freq, -pop_2015)
 # Plots the distribution of divorces in each state per population
-DF_map <- plot_usmap(data = dfDivorce, values = "distrib", color = "red") + 
+DF_map <- plot_usmap(data = dfDivorce, values = "distrib", color = "red", labels=TRUE) + 
   scale_fill_continuous(
     low = "white", high = "red", name = 
       "Questions per 100,000 people"
@@ -170,8 +172,21 @@ DF_map <- plot_usmap(data = dfDivorce, values = "distrib", color = "red") +
   theme(legend.position = "bottom", plot.title = element_text(hjust = 0.5)) +
   labs(title = "Prevalence of divorce related questions")
 
+DF_map$layers[[2]]$aes_params$size <- 2
+
 plot_grid(div_map, DF_map, ncol = 2, nrow = 1)
 ```
+
+```{r}
+states <- data.frame(state.abb)
+statesLoc <- data.frame(state.center)
+usData <- cbind(states, statesLoc)
+colnames(usData) <- c("state", "lat", "long")
+```
+
+
+
+
 
 ### Interpretation of visualization 2:
 
