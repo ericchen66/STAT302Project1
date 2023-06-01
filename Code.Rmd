@@ -422,7 +422,6 @@ The objective of this research inquiry is to accurately forecast whether a clien
 
 ## Model creation & evaluation
 
-
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Find the top 5 states
 num_states <- data_overall %>%
@@ -478,6 +477,19 @@ model1 <- glm(Subcategory ~ ., data = model_data, family = 'binomial')
 
 
 
+
+
+```{r eval= TRUE, include=FALSE, echo=FALSE}
+library(MASS)
+intercept_only <- glm(Subcategory ~ 1, data = model_data)
+# Model 2: Using stepwise variable selection
+model2 <- forward <- step(intercept_only, direction='both', scope=formula(model1), trace=0)
+
+model2$anova
+
+```
+
+
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
 library(MASS)
 
@@ -510,6 +522,9 @@ plot(cv_model)
 best_model <- glmnet(x, y, alpha = 1, lambda = best_lambda)
 coef(best_model)
 
+```
+```{r}
+summary(best_model$glmnet.fit)
 ```
 
 
@@ -547,6 +562,7 @@ cat("Model 3: Subcategory ~ \n")
 
 
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
+model_comparison[1]
 model_comparison[2]
 ```
 
