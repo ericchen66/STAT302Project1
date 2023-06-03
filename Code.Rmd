@@ -99,6 +99,18 @@ data_overall$Subcategory <- ifelse(str_detect(data_overall$Subcategory, "Divorce
 ```
 
 
+# Introduction:
+
+
+
+
+
+
+
+
+
+
+
 # Visualization 1: Investigating the Top 15 Subcategories of Asked Questions
 
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
@@ -280,20 +292,9 @@ plot_grid(PlotCheckings, PlotSavings, ncol = 1, nrow = 2)
 
 
 
-```{r}
-top_status <- data_noOutlier %>%
-  group_by(MaritalStatus) %>%
-  summarise(num_status = n()) %>%
-  ungroup()
-numtop_status <- top_status %>%
-  arrange(desc(num_status)) %>%
-  head(5)
-```
 
 
-
-
-###############TESTING VISUALIZATION 3
+# Visualization 3: Financial Status Correlation with Marital Status
 
 ```{r eval= TRUE, include=TRUE, echo=FALSE, warning = FALSE, message=FALSE}
 
@@ -467,7 +468,6 @@ The objective of this research inquiry is to accurately forecast whether a clien
 
 ## Model creation & evaluation
 
-
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Find the top 3 states
 num_states <- data_overall %>%
@@ -479,7 +479,7 @@ num_states <- num_states %>%
   head(3)
 #num_states
 
-# Find the top 5 marital status
+# Find the top 4 marital status
 num_marital <- data_overall %>%
   group_by(MaritalStatus) %>%
   summarise(nums = n()) %>%
@@ -489,7 +489,7 @@ num_marital <- num_marital %>%
   head(4)
 #num_marital
 
-# Find the top 3 ethics
+# Find the top 3 ethinicities
 num_ethnic <- data_overall %>%
   group_by(EthnicIdentity) %>%
   summarise(nums = n()) %>%
@@ -510,14 +510,8 @@ num_sex <- num_sex %>%
 #num_sex
 ```
 
-
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
 model_data <- data_overall 
-
-# model_data <- data_overall %>%
-#   select(-EthnicIdentity)
-
-
 
 # Create refined dataset for input to our models 
 # Mutate the top 3 states into 1 variable and all others into another variable
@@ -528,6 +522,7 @@ model_data <- model_data %>%
     StateAbbr %in% c("FL", "TX", "IN") ~ "Top 3 States",
     TRUE ~ "All Other States"))
   
+# Top 4 marital status and then all others
 model_data <- model_data %>%
   mutate(MaritalStatus = case_when(
     MaritalStatus %in% ("Single") ~ "Single",
@@ -536,7 +531,7 @@ model_data <- model_data %>%
     MaritalStatus %in% ("Separated") ~ "Separated",
     TRUE ~ "All Other Marital Status"))
 
-
+# Top 3 ethnicities and then all others
 model_data <- model_data %>%
   mutate(EthnicIdentity = case_when(
     EthnicIdentity %in% ("Caucasian") ~ "Caucasian",
@@ -544,26 +539,12 @@ model_data <- model_data %>%
     EthnicIdentity %in% ("Not Hispanic or Latino") ~ "Not Hispanic or Latino",
     TRUE ~ "All Other Ethnicities"))
 
-
+# Top 2 genders and then all others
 model_data <- model_data %>%
   mutate(Gender = case_when(
     Gender %in% ("Female") ~ "Female",
     Gender %in% ("Male") ~ "Male",
     TRUE ~ "All Other Genders"))
-
-
-# 
-# # Select the top 4 marital status
-# model_data <- subset(model_data,
-#                      MaritalStatus %in% c("Single", "Married / remarried", "Divorced or Widowed", "Separated"))
-
-# # Select the top 3 ethnicities
-# model_data <- subset(model_data,
-#                      EthnicIdentity %in% c("Caucasian", "African American", "Not Hispanic or Latino"))
-
-# # Select the top 2 genders
-# model_data <- subset(model_data,
-#                      Gender %in% c("Female", "Male"))
 
 # All independent variables used (in reference to Top 3 States and Single, Caucasian, Male)
 model_data$GroupedStateAbbr <- relevel(factor(model_data$GroupedStateAbbr), ref = 'Top 3 States')
@@ -578,26 +559,13 @@ model_data <- model_data %>%
 # Remove all NULL values
 model_data[model_data == "NULL"] = NA
 model_data <- na.omit(model_data)
-
 ```
-
-
-
 
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Model 1:All independent variables used 
 model1 <- glm(Subcategory ~ ., data = model_data, family = 'binomial')
 
-```
 
-
-
-```{r eval= TRUE, include=FALSE, echo=FALSE}
-# # Model 2: Using stepwise variable selection
-# model2 <- step(model1, trace=FALSE, direction = "both", k=log(nrow(model_data)))
-```
-
-```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Model 2: Based on significant factors
 
 refined_data <- model_data %>%
@@ -607,36 +575,19 @@ refined_data <- model_data %>%
 refined_data <- subset(refined_data,
                      EthnicIdentity %in% c("Caucasian", "African American", "All Other Ethnicities"))
 
-
-
 model2 <- glm(Subcategory ~ Age + NumberInHousehold + MaritalStatus + SavingsBalance + CheckingBalance + Gender + GroupedStateAbbr + EthnicIdentity, data = refined_data, family = 'binomial')
-```
-
-```{r eval= TRUE, include=FALSE, echo=FALSE}
-# library(glmtoolbox)
-# 
-# model2test <- stepCriterion(model1, 
-#                          direction="forward", 
-#                          criterion="aic", 
-#                          test="lr",
-#                          levels = c(0.01, 0.01),
-#                          k = 2.7)
-```
 
 
-
-```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Model 3: Based solely upon client financial information
 model3 <- glm(Subcategory ~ AnnualIncome + SavingsBalance + CheckingBalance, 
               data = model_data, 
               family = 'binomial')
-```
 
 
-```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Model comparison
 model_comparison <- compareGLM(model1, model2, model3)
 ```
+
 
 
 ### Comparison of Models
@@ -648,7 +599,7 @@ Based on the principle that model selection criteria strike a balance between go
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
 cat("The 3 models formulae:\n\n")
 cat("Model 1: Subcategory ~ Age + NumberInHousehold + MaritalStatus + AnnualIncome + SavingsBalance + CheckingBalance + AllowedIncome + EthnicIdentity + Gender + GroupedStateAbbr\n")
-cat("Model 2: Age + NumberInHousehold + MaritalStatus + SavingsBalance + CheckingBalance + Gender + GroupedStateAbbr + EthnicIdentity\n")
+cat("Model 2: Subcategory ~ Age + NumberInHousehold + MaritalStatus + SavingsBalance + CheckingBalance + Gender + GroupedStateAbbr + EthnicIdentity\n")
 cat("Model 3: Subcategory ~ AnnualIncome + SavingsBalance + CheckingBalance\n")
 ```
 
@@ -656,22 +607,109 @@ cat("Model 3: Subcategory ~ AnnualIncome + SavingsBalance + CheckingBalance\n")
 model_comparison[2]
 ```
 
+### Summary of best model
+
+```{r include=TRUE, echo=FALSE}
+summary(model2)
+```
 
 
 
+##################  
+Logistic Regression for our best model:  
+Log odds of asking question related to divorce   
 ##################
-Logistic Regression for our best model: 
-Log odds of asking question related to divorce 
-##################
 
 
 $$
-P(Divorce = 1) = \frac{1}{e^{-(\beta_0 + \beta_1(Var1) + \beta_2(Var2)...)}}
+P(Divorce = 1) = \frac{e^{(\beta_0 + \beta_1X_1 + \beta_2X_2...\beta_nX_n)}}{1 +e^{(\beta_0 + \beta_1X_1 + \beta_2X_2...\beta_nX_n)}}
+$$
+
+
+### Log-Odds regression equation
+
+$$
+\begin{aligned}
+logit(P(Divorce = 1)) &= \ln \left( \frac{P(Divorce = 1)}{1-P(Divorce = 1)}\right) \\ &= \Large \beta_0 + \beta_1X_1 + \beta_2X_2...\beta_nX_n 
+\end{aligned}
+$$
+
+
+### Logistic Regression equation for optimum model
+
+$$
+\begin{aligned}
+logit(P(Divorce = 1)) = &-0.576 - (0.034 \cdot Age) + (0.068 \cdot NumberInHousehold) + (0.534 \cdot All Other Marital Status)\\ &+ (1.049 \cdot Divorced Or Widowed) + (0.857 \cdot Married / remarried) + (2.163 \cdot Separated) \\ &- (1.457 \times 10^{-5} \cdot SavingsBalance) - (3.520 \times 10^{-5} \cdot CheckingBalance) \\ &- (0.320 \cdot All Other Genders) + (0.383 \cdot Female) - (0.071 \cdot All OtherStates) \\ &- (0.102 \cdot African American) + (0.097 \cdot All Other Ethinicities)
+\end{aligned}
+$$
+
+#### Example 1:
+
+
+For instance, a widowed African American female age 29, with 3 in her household from the state of Washington with a checking balance of \$500 and a savings balance of \$250 can be predicted as the following:
+
+
+$$
+\begin{aligned}
+logit(P(Divorce = 1)) = &-0.576 - (0.034 \cdot 29) + (0.068 \cdot 3) + (0.534 \cdot 0)\\ &+ (1.049 \cdot 1) + (0.857 \cdot 0) + (2.163 \cdot 0) \\ &- (1.457 \times 10^{-5} \cdot 250) - (3.520 \times 10^{-5} \cdot 500) \\ &- (0.320 \cdot 0) + (0.383 \cdot 1) - (0.071 \cdot 1) \\ &- (0.102 \cdot 1) + (0.097 \cdot 0) \\
+= -0.120
+\end{aligned}
 $$
 
 $$
-logit(P(Divorce = 1)) = \beta_0 + \beta_1(Var1) + \beta_2(Var2)...
+P(Divorce = 1) = \frac{e^{-0.12}}{1 + e^{-0.12}} = 0.47
 $$
+
+```{r}
+# Example 2: A widowed African American female age 29, with 3 in her household from the state of Washington with a checking balance of $500 and a savings balance of $250
+test_obs <- data.frame(
+  Age = 33,
+  NumberInHousehold = 3,
+  SavingsBalance = 250,
+  CheckingBalance = 500,
+  EthnicIdentity = "African American",
+  MaritalStatus = "Divorced or Widowed",
+  Gender = "Female",
+  GroupedStateAbbr = "All Other States"
+)
+
+
+predict1 <- predict(model2, type = "response", test_obs)
+predict1
+```
+
+
+#### Example 2:
+
+white male 33 from fl single 1 in house 0 in savings and 0 in checking
+
+$$
+\begin{aligned}
+logit(P(Divorce = 1)) &= -0.576 - (0.034 \cdot 33) + (0.068 \cdot 1) \\ &=-1.63
+\end{aligned}
+$$
+$$
+P(Divorce = 1) = \frac{e^{-1.63}}{1 + e^{-1.63}} = 0.164
+$$
+
+```{r}
+# Example 2: white male 33 from fl single 1 in house 0 in savings and 0 in checking
+test_obs <- data.frame(
+  Age = 33,
+  NumberInHousehold = 1,
+  SavingsBalance = 0,
+  CheckingBalance = 0,
+  EthnicIdentity = "Caucasian",
+  MaritalStatus = "Single",
+  Gender = "Male",
+  GroupedStateAbbr = "Top 3 States"
+)
+
+
+predict2 <- predict(model2, type = "response", test_obs)
+predict2
+```
+
 
 
 
@@ -707,11 +745,7 @@ vif(model2)
 
 
 
-### Summary of best model
 
-```{r}
-summary(model2)
-```
 
 
 The predictors deemed statistically significant with a confidence level of 5% are:
@@ -723,6 +757,11 @@ print(paste0(row.names(mod_summ)))
 ```
 
 ### Odds ratio and confidence intervals for the best model
+
+```{r eval= TRUE, include=TRUE, echo=FALSE}
+# Using Standard Errors
+exp(cbind(OR = coef(model2), confint.default(model2)))
+```
 
 By considering Florida as the reference state and Single as the reference marital status, we can discern significant associations between the response variable and the corresponding covariates while keeping all other variables constant. 
 
@@ -740,10 +779,7 @@ For state, let’s take Hawaii(StateAbbrHI) as an example, the odds ratio is 2.2
 
 On the other hand, the state Georgia(StateAbbrGA), the odds ratio is  0.95 with 95% CI being 0.84 to 1.06. The confidence interval did cross 1, which means there is no difference between clients from Georgia and other different states when it comes to the odds of asking questions related to divorce. 
 
-```{r eval= TRUE, include=TRUE, echo=FALSE}
-# Using Standard Errors
-exp(cbind(OR = coef(model2), confint.default(model2)))
-```
+
 
 ### Accuracy of Best Model
 
