@@ -490,7 +490,7 @@ num_marital <- num_marital %>%
 #num_marital
 
 # Find the top 3 ethics
-num_ethnic <- model_data %>%
+num_ethnic <- data_overall %>%
   group_by(EthnicIdentity) %>%
   summarise(nums = n()) %>%
   ungroup()
@@ -500,7 +500,7 @@ num_ethnic <- num_ethnic %>%
 #num_ethnic
 
 # Find the top 2 genders
-num_sex <- model_data %>%
+num_sex <- data_overall %>%
   group_by(Gender) %>%
   summarise(nums = n()) %>%
   ungroup()
@@ -583,7 +583,6 @@ model_data <- na.omit(model_data)
 
 
 
-#### MODEL 1
 
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Model 1:All independent variables used 
@@ -592,14 +591,13 @@ model1 <- glm(Subcategory ~ ., data = model_data, family = 'binomial')
 ```
 
 
-####MODEL 2
 
-```{r}
+```{r eval= TRUE, include=FALSE, echo=FALSE}
 # # Model 2: Using stepwise variable selection
 # model2 <- step(model1, trace=FALSE, direction = "both", k=log(nrow(model_data)))
 ```
 
-```{r}
+```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Model 2: Based on significant factors
 
 refined_data <- model_data %>%
@@ -614,7 +612,7 @@ refined_data <- subset(refined_data,
 model2 <- glm(Subcategory ~ Age + NumberInHousehold + MaritalStatus + SavingsBalance + CheckingBalance + Gender + GroupedStateAbbr + EthnicIdentity, data = refined_data, family = 'binomial')
 ```
 
-```{r}
+```{r eval= TRUE, include=FALSE, echo=FALSE}
 # library(glmtoolbox)
 # 
 # model2test <- stepCriterion(model1, 
@@ -626,15 +624,13 @@ model2 <- glm(Subcategory ~ Age + NumberInHousehold + MaritalStatus + SavingsBal
 ```
 
 
-#### MODEL 3
 
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
-# Model 3: Based soley upon client finacial information
+# Model 3: Based solely upon client financial information
 model3 <- glm(Subcategory ~ AnnualIncome + SavingsBalance + CheckingBalance, 
               data = model_data, 
               family = 'binomial')
 ```
-
 
 
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
@@ -650,17 +646,11 @@ To identify the optimal model, we assessed the Akaike Information Criterion (AIC
 Based on the principle that model selection criteria strike a balance between goodness of fit and model complexity, it is known that AIC tends to favor more complex models, whereas BIC penalizes complexity more rigorously. Lower values of AIC or BIC indicate a better fit. By examining the chart, we note that the lowest AIC and BIC values correspond to our initial model, which included all the independent variables discussed in our research question. Therefore we selected model 1 as it had both the lowest AIC and BIC scores. AIC is a better indicator to use in answering our research question, as it maximizes the predictive power of the data for any future data. However, since both the AIC and BIC values agree on which model out of the five we created is the best, we can safely choose model 1 moving forward.
 
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
-model_comparison[1]
-```
-
-```{r}
 cat("The 3 models formulae:\n\n")
 cat("Model 1: Subcategory ~ Age + NumberInHousehold + MaritalStatus + AnnualIncome + SavingsBalance + CheckingBalance + AllowedIncome + EthnicIdentity + Gender + GroupedStateAbbr\n")
 cat("Model 2: Age + NumberInHousehold + MaritalStatus + SavingsBalance + CheckingBalance + Gender + GroupedStateAbbr + EthnicIdentity\n")
 cat("Model 3: Subcategory ~ AnnualIncome + SavingsBalance + CheckingBalance\n")
 ```
-
-
 
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 model_comparison[2]
@@ -671,16 +661,17 @@ model_comparison[2]
 
 ##################
 Logistic Regression for our best model: 
-Log odds of asking question related to divorce = -0.04103 * Age - 1.849e-05 * SavingsBalance - 1.214e-07 * AnnualIncome - 3.932e-05 * CheckingBalance + 2.987e-02 + (coefficient of StateAbbr) + (coefficient of  MaritalStatus)
-
-Note: There are multiple cases of regression depend on the reference group of the factored categorical variables StateAbbr and MaritalStatus.
-###############
+Log odds of asking question related to divorce 
+##################
 
 
+$$
+P(Divorce = 1) = \frac{1}{e^{-(\beta_0 + \beta_1(Var1) + \beta_2(Var2)...)}}
+$$
 
-
-
-
+$$
+logit(P(Divorce = 1)) = \beta_0 + \beta_1(Var1) + \beta_2(Var2)...
+$$
 
 
 
@@ -696,20 +687,14 @@ Given that logistic regression was employed for our research inquiry, we assesse
 
 ### Testing for Multicollinearity
 
-During the multicollinearity assessment, it was observed that two of our independent variables, namely NumberInHousehold and AllowedIncome, exhibited a strong correlation. The GVIF values for these variables exceeded 5, indicating the need for their exclusion. This finding aligns with expectations, as the state's permitted income typically depends on the number of dependents residing in a household.
+While conducting the multicollinearity assessment, it was noticed that the GVIF (Generalized Variance Inflation Factor) values for all our predictor variables were below 5. This suggests that we can safely assume the independence of observations in the dataset.
 
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 vif(model2)
 ```
 
 
-### Fixing Multicollinearity
 
-Upon exclusion of the independent variable "AllowedIncome," we observe a multicollinearity level of less than 5, indicating the absence of multicollinearity within our model.
-
-```{r eval= TRUE, include=TRUE, echo=FALSE}
-vif(model2)
-```
 
 
 
@@ -724,20 +709,16 @@ vif(model2)
 
 ### Summary of best model
 
-By considering Florida as the state of residence reference and being single as the marital status reference, we can determine the predictors that positively and negatively influence the model.
-
-```{r eval= TRUE, include=TRUE, echo=FALSE}
-coeff_pos <- model1$coefficients[model1$coefficients >= 0]
-coeff_pos
-coeff_neg <- model1$coefficients[model1$coefficients < 0]
-coeff_neg
+```{r}
+summary(model2)
 ```
+
 
 The predictors deemed statistically significant with a confidence level of 5% are:
 
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 # The predictors that are considered significant at the 5% level of confidence are:
-mod_summ <- data.frame(summary(model1)$coef[summary(model1)$coef[,4] <= .05, 4])
+mod_summ <- data.frame(summary(model2)$coef[summary(model2)$coef[,4] <= .05, 4])
 print(paste0(row.names(mod_summ)))
 ```
 
@@ -766,16 +747,25 @@ exp(cbind(OR = coef(model2), confint.default(model2)))
 
 ### Accuracy of Best Model
 
-Based on the classification table below, our optimal model accurately predicted 32,840 out of 50,620 total observations.
-
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 # Accuracy Table
 acc_table <- table(factor(refined_data$Subcategory), predict(model2)>0)
 acc_table
 # % Accuracy
 accuracy <- ((acc_table[1] + acc_table[4])/sum(acc_table))*100
-print(paste0("The accuracy of our best model was: ", round(accuracy, 2), "%."))
+cat("\nThe accuracy of our best model was:", round(accuracy, 2), "%.")
 ```
+
+The accuracy classification table presented indicates that around 72% of the fitted values were accurately classified, as calculated by adding the number of correctly classified values (29730) to the number of false negatives (3118), and dividing it by the total number of observations (45731).
+
+In terms of accuracy, this implies that our model performs significantly better than a random guess. Randomly guessing the correct classification for divorce-related questions would yield a 50% chance of being accurate. However, our model surpasses this baseline, demonstrating a higher level of accuracy.
+
+
+
+
+
+
+
 
 # Summary & Conclusions
 
