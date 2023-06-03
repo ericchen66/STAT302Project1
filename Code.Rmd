@@ -84,7 +84,7 @@ df2 <- left_join(attorneys, attorneys_time, join_by("StateAbbr", "AttorneyUno"))
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Select the independent variables we want to observe and Remove all NA
 data_overall <- df1 %>%
-  select(StateAbbr, Age, NumberInHousehold, MaritalStatus, AnnualIncome, SavingsBalance, CheckingBalance, AllowedIncome, Category, Subcategory, ClientUno) %>%
+  select(StateAbbr, Age, NumberInHousehold, MaritalStatus, AnnualIncome, SavingsBalance, CheckingBalance, AllowedIncome, Category, Subcategory, ClientUno, EthnicIdentity, Gender) %>%
   distinct(ClientUno, .keep_all = TRUE) %>%
   select(-ClientUno) %>%
   na.omit(df1)
@@ -280,6 +280,15 @@ plot_grid(PlotCheckings, PlotSavings, ncol = 1, nrow = 2)
 
 
 
+```{r}
+top_status <- data_noOutlier %>%
+  group_by(MaritalStatus) %>%
+  summarise(num_status = n()) %>%
+  ungroup()
+numtop_status <- top_status %>%
+  arrange(desc(num_status)) %>%
+  head(5)
+```
 
 
 
@@ -290,105 +299,140 @@ plot_grid(PlotCheckings, PlotSavings, ncol = 1, nrow = 2)
 
 # Visualization 3
 
-# Get rid of outliers
-quartiles <- quantile(data_overall$AnnualIncome, probs=c(.25, .75), na.rm = FALSE)
-IQR <- IQR(data_overall$AnnualIncome)
-Lower <- quartiles[1] - 1.5*IQR
-Upper <- quartiles[2] + 1.5*IQR
-
-# Investigating the correlation between 
-data_noOutlier <- subset(data_overall, AnnualIncome > Lower & AnnualIncome < Upper)
-
-
-# Data cleaning, select the top 5 Marital status
-top_status <- data_noOutlier %>%
-  group_by(MaritalStatus) %>%
-  summarise(num_status = n()) %>%
-  ungroup()
-numtop_status <- top_status %>%
-  arrange(desc(num_status)) %>%
-  head(5)
+# # Data cleaning, select the top 4 Marital status
+# top_status <- data_overall %>%
+#   group_by(MaritalStatus) %>%
+#   summarise(num_status = n()) %>%
+#   ungroup()
+# numtop_status <- top_status %>%
+#   arrange(desc(num_status)) %>%
+#   head(4)
 
 
-data_noOutlier <- data_noOutlier %>%
-  filter(data_noOutlier$AnnualIncome > 0)
 
-data_noOutlier <- subset(data_noOutlier, MaritalStatus %in% c("Single", "Married / remarried", "Divorced or Widowed", "Separated","I'd rather not answer"))
+
+
+
+
+data_Plot3 <- data_overall
+
+
+
+# Function removes all outliers 
+outliers <- function(x) {
+
+  Q1 <- quantile(x, probs=.25)
+  Q3 <- quantile(x, probs=.75)
+  iqr = Q3-Q1
+
+ upper_limit = Q3 + (iqr*1.5)
+ lower_limit = Q1 - (iqr*1.5)
+
+ x > upper_limit | x < lower_limit
+}
+
+remove_outliers <- function(df, cols = names(df)) {
+  for (col in cols) {
+    df <- df[!outliers(df[[col]]),]
+  }
+  df
+}
+
+data_noOutlier <- remove_outliers(data_overall, c("Age", "AnnualIncome", "SavingsBalance", "CheckingBalance", "AllowedIncome"))
+
+data_Plot3 <- data_noOutlier
+
+
+
+# Select top 5 marital status
+data_Plot3 <- subset(data_Plot3, MaritalStatus %in% c("Single", "Married / remarried", "Divorced or Widowed", "Separated"))
 
 # Create facet titles
 Subcategory.labs <- c("Divorce", "Other")
 names(Subcategory.labs) <- c("1", "0")
 
 
-
-
-
-
-#   Box plot of median annual income level of people of top 5 marital status
+#   Box plot of median annual income level of people of top 4 marital status
 #   Faceted by subcategory 
-PlotAnnual <- ggplot(data = data_noOutlier, aes(x = AnnualIncome , y = MaritalStatus, fill 
-                                  = MaritalStatus)) +
+PlotAnnual <- ggplot(data = data_Plot3, 
+                     aes(x = AnnualIncome , 
+                         y = MaritalStatus, 
+                         fill = MaritalStatus)) +
   geom_boxplot() +
   labs(x = "Annual Income",
        y = "Marital Status",
-       title = "Client Marital Status and Annual Income, 
+       title = "Comparing Top 4 Client Marital statuses with Annual Income, 
        Split by Divorce Related Questions/Other Questions") +
-  facet_wrap(~ Subcategory, labeller = labeller(Subcategory = Subcategory.labs)) +
+  facet_wrap(~ Subcategory, 
+             labeller = labeller(Subcategory = Subcategory.labs)) +
   theme_bw(base_size = 10) +
   theme(plot.title =
-          element_text(hjust = 0.5), legend.position = "none") +
-  coord_cartesian(xlim = c(0, 75000))
+          element_text(hjust = 0.5), 
+        legend.position = "none") +
+  coord_cartesian(xlim = c(0, 80000))
 
 
 
-#   Box plot of median checking balance level of people of top 5 marital status
+#   Box plot of median checking balance level of people of top 4 marital status
 #   Faceted by subcategory 
-PlotAllowed <- ggplot(data = data_noOutlier, aes(x = AllowedIncome , y = MaritalStatus, fill 
-                                  = MaritalStatus)) +
+PlotAllowed <- ggplot(data = data_Plot3, 
+                      aes(x = AllowedIncome , 
+                          y = MaritalStatus, 
+                          fill = MaritalStatus)) +
   geom_boxplot() +
   labs(x = "Allowed Income",
        y = "Marital Status",
-       title = "Client Marital Status and Allowed Income, 
+       title = "Comparing Top 4 Client Marital statuses with Allowed Income, 
        Split by Divorce Related Questions/Other Questions") +
-  facet_wrap(~ Subcategory, labeller = labeller(Subcategory = Subcategory.labs)) +
+  facet_wrap(~ Subcategory, 
+             labeller = labeller(Subcategory = Subcategory.labs)) +
   theme_bw(base_size = 10) +
   theme(plot.title =
-          element_text(hjust = 0.5), legend.position = "none")+
+          element_text(hjust = 0.5), 
+        legend.position = "none")+
   coord_cartesian(xlim = c(0, 75000))
 
 
 
 
-#   Box plot of median checking balance level of people of top 5 marital status
+#   Box plot of median checking balance level of people of top 4 marital status
 #   Faceted by subcategory 
-PlotCheckings <- ggplot(data = data_noOutlier, aes(x = CheckingBalance , y = MaritalStatus, fill 
-                                  = MaritalStatus)) +
+PlotCheckings <- ggplot(data = data_Plot3, 
+                        aes(x = CheckingBalance , 
+                            y = MaritalStatus, 
+                            fill = MaritalStatus)) +
   geom_boxplot() +
   labs(x = "Checking Balance",
        y = "Marital Status",
-       title = "Client Marital Status and Checking Balance, 
+       title = "Comparing Top 4 Client Marital statuses with Checking Balance, 
        Split by Divorce Related Questions/Other Questions") +
-  facet_wrap(~ Subcategory, labeller = labeller(Subcategory = Subcategory.labs)) +
+  facet_wrap(~ Subcategory, 
+             labeller = labeller(Subcategory = Subcategory.labs)) +
   theme_bw(base_size = 10) +
   theme(plot.title =
-          element_text(hjust = 0.5), legend.position = "none") +
-  coord_cartesian(xlim = c(-600, 1200))
+          element_text(hjust = 0.5), 
+        legend.position = "none") +
+  coord_cartesian(xlim = c(-300, 300))
 
 
-#   Box plot of median savings balance level of people of top 5 marital status
+#   Box plot of median savings balance level of people of top 4 marital status
 #   Faceted by subcategory 
-PlotSavings <- ggplot(data = data_noOutlier, aes(x = SavingsBalance , y = MaritalStatus, fill 
-                                  = MaritalStatus)) +
+PlotSavings <- ggplot(data = data_Plot3, 
+                      aes(x = SavingsBalance , 
+                          y = MaritalStatus, 
+                          fill = MaritalStatus)) +
   geom_boxplot() +
   labs(x = "Savings Balance",
        y = "Marital Status",
-       title = "Client Marital Status and Savings Balance, 
+       title = "Comparing Top 4 Client Marital statuses with Savings Balance, 
        Split by Divorce Related Questions/Other Questions") +
-  facet_wrap(~ Subcategory, labeller = labeller(Subcategory = Subcategory.labs)) +
+  facet_wrap(~ Subcategory, 
+             labeller = labeller(Subcategory = Subcategory.labs)) +
   theme_bw(base_size = 10) +
   theme(plot.title =
-          element_text(hjust = 0.5), legend.position = "none") +
-  coord_cartesian(xlim = c(-600, 1200))
+          element_text(hjust = 0.5), 
+        legend.position = "none") +
+  coord_cartesian(xlim = c(-300, 300))
 
 
 
@@ -412,7 +456,8 @@ On average, clients seeking divorce-related guidance tend to have lower checking
 
 Is there significant predictive ability by assessing clients' background to determine whether their legal question will be related to divorce?
 
-The objective of this research inquiry is to accurately forecast whether a client will seek legal assistance related to divorce or another area based solely on their background information, encompassing finances, relationship status, and residential location. In this study, we propose that the dependent variable is binary, representing whether the client poses a divorce-related question or not. 
+The objective of this research inquiry is to accurately forecast whether a client will seek legal assistance related to divorce or another area based solely on their sociodemographics. In this study, we propose that the dependent variable is binary, representing whether the client poses a divorce-related question or not. 
+
 
 
 
@@ -422,15 +467,16 @@ The objective of this research inquiry is to accurately forecast whether a clien
 
 ## Model creation & evaluation
 
+
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
-# Find the top 5 states
+# Find the top 3 states
 num_states <- data_overall %>%
   group_by(StateAbbr) %>%
   summarise(nums = n()) %>%
   ungroup()
 num_states <- num_states %>%
   arrange(desc(nums)) %>%
-  head(5)
+  head(3)
 #num_states
 
 # Find the top 5 marital status
@@ -440,34 +486,104 @@ num_marital <- data_overall %>%
   ungroup()
 num_marital <- num_marital %>%
   arrange(desc(nums)) %>%
-  head(5)
+  head(4)
 #num_marital
+
+# Find the top 3 ethics
+num_ethnic <- model_data %>%
+  group_by(EthnicIdentity) %>%
+  summarise(nums = n()) %>%
+  ungroup()
+num_ethnic <- num_ethnic %>%
+  arrange(desc(nums)) %>%
+  head(3)
+#num_ethnic
+
+# Find the top 2 genders
+num_sex <- model_data %>%
+  group_by(Gender) %>%
+  summarise(nums = n()) %>%
+  ungroup()
+num_sex <- num_sex %>%
+  arrange(desc(nums)) %>%
+  head(2)
+#num_sex
+```
+
+
+```{r eval= TRUE, include=FALSE, echo=FALSE}
+model_data <- data_overall 
+
+# model_data <- data_overall %>%
+#   select(-EthnicIdentity)
+
 
 
 # Create refined dataset for input to our models 
 # Mutate the top 3 states into 1 variable and all others into another variable
 
 # TOP 3 STATES ARE............FL, TX, IN
-model_data <- data_overall %>%
+model_data <- model_data %>%
   mutate(GroupedStateAbbr = case_when(
     StateAbbr %in% c("FL", "TX", "IN") ~ "Top 3 States",
     TRUE ~ "All Other States"))
   
-# Select the top 4 marital status
-model_data <- subset(model_data, MaritalStatus %in% c("Single", "Married / remarried", "Divorced or Widowed", "Separated"))
+model_data <- model_data %>%
+  mutate(MaritalStatus = case_when(
+    MaritalStatus %in% ("Single") ~ "Single",
+    MaritalStatus %in% ("Married / remarried") ~ "Married / remarried", 
+    MaritalStatus %in% ("Divorced or Widowed") ~ "Divorced or Widowed",
+    MaritalStatus %in% ("Separated") ~ "Separated",
+    TRUE ~ "All Other Marital Status"))
 
-
-
-# All independent variables used (in reference to Top 3 States and Single)
-model_data$GroupedStateAbbr <- relevel(factor(model_data$GroupedStateAbbr), ref = 'Top 3 States')
-model_data$MaritalStatus <- relevel(factor(model_data$MaritalStatus), ref = 'Single')
 
 model_data <- model_data %>%
+  mutate(EthnicIdentity = case_when(
+    EthnicIdentity %in% ("Caucasian") ~ "Caucasian",
+    EthnicIdentity %in% ("African American") ~ "African American",
+    EthnicIdentity %in% ("Not Hispanic or Latino") ~ "Not Hispanic or Latino",
+    TRUE ~ "All Other Ethnicities"))
+
+
+model_data <- model_data %>%
+  mutate(Gender = case_when(
+    Gender %in% ("Female") ~ "Female",
+    Gender %in% ("Male") ~ "Male",
+    TRUE ~ "All Other Genders"))
+
+
+# 
+# # Select the top 4 marital status
+# model_data <- subset(model_data,
+#                      MaritalStatus %in% c("Single", "Married / remarried", "Divorced or Widowed", "Separated"))
+
+# # Select the top 3 ethnicities
+# model_data <- subset(model_data,
+#                      EthnicIdentity %in% c("Caucasian", "African American", "Not Hispanic or Latino"))
+
+# # Select the top 2 genders
+# model_data <- subset(model_data,
+#                      Gender %in% c("Female", "Male"))
+
+# All independent variables used (in reference to Top 3 States and Single, Caucasian, Male)
+model_data$GroupedStateAbbr <- relevel(factor(model_data$GroupedStateAbbr), ref = 'Top 3 States')
+model_data$MaritalStatus <- relevel(factor(model_data$MaritalStatus), ref = 'Single')
+model_data$EthnicIdentity <- relevel(factor(model_data$EthnicIdentity), ref = 'Caucasian')
+model_data$Gender <- relevel(factor(model_data$Gender), ref = 'Male')
+
+# Remove category and stateabbr
+model_data <- model_data %>%
   select(-Category, -StateAbbr)
+
+# Remove all NULL values
+model_data[model_data == "NULL"] = NA
+model_data <- na.omit(model_data)
 
 ```
 
 
+
+#### MODEL 1
 
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Model 1:All independent variables used 
@@ -476,65 +592,48 @@ model1 <- glm(Subcategory ~ ., data = model_data, family = 'binomial')
 ```
 
 
-
-
-
-```{r eval= TRUE, include=FALSE, echo=FALSE}
-library(MASS)
-intercept_only <- glm(Subcategory ~ 1, data = model_data)
-# Model 2: Using stepwise variable selection
-model2 <- forward <- step(intercept_only, direction='both', scope=formula(model1), trace=0)
-
-model2$anova
-
-```
-
-
-```{r eval= TRUE, include=FALSE, echo=FALSE}
-library(MASS)
-
-# Model 2: Using stepwise variable selection
-model2 <- model1 %>% stepAIC(trace=FALSE)
-```
-
+####MODEL 2
 
 ```{r}
-# 2nd Model 2: Using LASSO
-
-y <- model_data$Subcategory
-x <- data.matrix(model_data[, c("Age", "NumberInHousehold", "MaritalStatus", "AnnualIncome", "SavingsBalance", "CheckingBalance", "AllowedIncome", "GroupedStateAbbr")])
-
-library(glmnet)
-
-#perform k-fold cross-validation to find optimal lambda value
-cv_model <- cv.glmnet(x, y, alpha = 1)
-
-#find optimal lambda value that minimizes test MSE
-best_lambda <- cv_model$lambda.min
-best_lambda
-
-
-#produce plot of test MSE by lambda value
-plot(cv_model) 
-
-
-#find coefficients of best model
-best_model <- glmnet(x, y, alpha = 1, lambda = best_lambda)
-coef(best_model)
-
+# # Model 2: Using stepwise variable selection
+# model2 <- step(model1, trace=FALSE, direction = "both", k=log(nrow(model_data)))
 ```
+
 ```{r}
-summary(best_model$glmnet.fit)
+# Model 2: Based on significant factors
+
+refined_data <- model_data %>%
+  select(-AnnualIncome)
+
+# Select the top 3 ethnicities since not hispanic or latino is not significant
+refined_data <- subset(refined_data,
+                     EthnicIdentity %in% c("Caucasian", "African American", "All Other Ethnicities"))
+
+
+
+model2 <- glm(Subcategory ~ Age + NumberInHousehold + MaritalStatus + SavingsBalance + CheckingBalance + Gender + GroupedStateAbbr + EthnicIdentity, data = refined_data, family = 'binomial')
+```
+
+```{r}
+# library(glmtoolbox)
+# 
+# model2test <- stepCriterion(model1, 
+#                          direction="forward", 
+#                          criterion="aic", 
+#                          test="lr",
+#                          levels = c(0.01, 0.01),
+#                          k = 2.7)
 ```
 
 
+#### MODEL 3
 
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Model 3: Based soley upon client finacial information
-model3 <- glm(Subcategory ~ AnnualIncome + SavingsBalance + CheckingBalance, data = model_data, 
+model3 <- glm(Subcategory ~ AnnualIncome + SavingsBalance + CheckingBalance, 
+              data = model_data, 
               family = 'binomial')
 ```
-
 
 
 
@@ -550,19 +649,20 @@ To identify the optimal model, we assessed the Akaike Information Criterion (AIC
 
 Based on the principle that model selection criteria strike a balance between goodness of fit and model complexity, it is known that AIC tends to favor more complex models, whereas BIC penalizes complexity more rigorously. Lower values of AIC or BIC indicate a better fit. By examining the chart, we note that the lowest AIC and BIC values correspond to our initial model, which included all the independent variables discussed in our research question. Therefore we selected model 1 as it had both the lowest AIC and BIC scores. AIC is a better indicator to use in answering our research question, as it maximizes the predictive power of the data for any future data. However, since both the AIC and BIC values agree on which model out of the five we created is the best, we can safely choose model 1 moving forward.
 
-```{r}
+```{r eval= TRUE, include=FALSE, echo=FALSE}
 model_comparison[1]
+```
 
-cat("Models Formulas:\n\n")
-cat("Model 1: Subcategory ~ Age + NumberInHousehold + MaritalStatus + AnnualIncome + SavingsBalance + CheckingBalance + AllowedIncome + GroupedStateAbbr\n")
-cat("Model 2: Subcategory ~ \n")
-cat("Model 3: Subcategory ~ \n")
+```{r}
+cat("The 3 models formulae:\n\n")
+cat("Model 1: Subcategory ~ Age + NumberInHousehold + MaritalStatus + AnnualIncome + SavingsBalance + CheckingBalance + AllowedIncome + EthnicIdentity + Gender + GroupedStateAbbr\n")
+cat("Model 2: Age + NumberInHousehold + MaritalStatus + SavingsBalance + CheckingBalance + Gender + GroupedStateAbbr + EthnicIdentity\n")
+cat("Model 3: Subcategory ~ AnnualIncome + SavingsBalance + CheckingBalance\n")
 ```
 
 
 
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
-model_comparison[1]
 model_comparison[2]
 ```
 
@@ -599,21 +699,16 @@ Given that logistic regression was employed for our research inquiry, we assesse
 During the multicollinearity assessment, it was observed that two of our independent variables, namely NumberInHousehold and AllowedIncome, exhibited a strong correlation. The GVIF values for these variables exceeded 5, indicating the need for their exclusion. This finding aligns with expectations, as the state's permitted income typically depends on the number of dependents residing in a household.
 
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
-vif(model1)
+vif(model2)
 ```
 
-```{r eval= TRUE, include=FALSE, echo=FALSE}
-# Model 1:All independent variables used 
-model1 <- glm(Subcategory ~ . - AllowedIncome, 
-              data = model_data, family = 'binomial')
-```
 
 ### Fixing Multicollinearity
 
 Upon exclusion of the independent variable "AllowedIncome," we observe a multicollinearity level of less than 5, indicating the absence of multicollinearity within our model.
 
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
-vif(model1)
+vif(model2)
 ```
 
 
@@ -666,7 +761,7 @@ On the other hand, the state Georgia(StateAbbrGA), the odds ratio is  0.95 with 
 
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 # Using Standard Errors
-exp(cbind(OR = coef(model1), confint.default(model1)))
+exp(cbind(OR = coef(model2), confint.default(model2)))
 ```
 
 ### Accuracy of Best Model
@@ -675,7 +770,7 @@ Based on the classification table below, our optimal model accurately predicted 
 
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 # Accuracy Table
-acc_table <- table(factor(model_data$Subcategory), predict(model1)>0)
+acc_table <- table(factor(refined_data$Subcategory), predict(model2)>0)
 acc_table
 # % Accuracy
 accuracy <- ((acc_table[1] + acc_table[4])/sum(acc_table))*100
