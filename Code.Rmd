@@ -649,23 +649,21 @@ df_odds_sig <- as.data.frame(exp(cbind(OR = coef(model2), confint.default(model2
 df_odds_sig
 ```
 
-By considering Florida as the reference state and Single as the reference marital status, we can discern significant associations between the response variable and the corresponding covariates while keeping all other variables constant. 
+By considering "Top 3 States" as our reference states, "Single" as our reference marital status, "Caucasian" as our reference ethnicity and "Male" as our reference gender we can discern significant associations between the response variable and the corresponding covariates while keeping all other variables constant.
 
-For example, in comparison to single clients, those who are separated exhibited considerably higher odds (OR = 12.9, 95% CI = 11.9-14.1) of inquiring about divorce-related matters. In terms of percentage change, the likelihood of a separated client posing divorce-related questions is approximately 1190% greater than that of a single client.
+For example, in comparison to single clients, those who are separated (OR = 8.699, 95% CI = 8.054-9.397), Married / remarried (OR = 2.356, 95% CI = 2.224-2.495), and Divorced or Widowed (OR = 2.855, 95% CI = 2.673-3.050) all exhibited higher odds of inquiring about divorce-related matters. For instance, in terms of percentage change, the likelihood of a separated client posing divorce-related questions is approximately 770% greater than that of a single client.
 
-The odds ratio (OR) for Age was found to be 0.956 (95% CI = 0.958-0.962). The confidence interval, which does not overlap with 1, indicates a significant variation in the likelihood of clients asking questions about divorce based on their age. Specifically, for each unit increase in a client's age, the odds of them inquiring about divorce decrease by 4.40%.
+The odds ratio (OR) for Age was found to be 0.966 (95% CI = 0.965-0.968). The confidence interval, which does not overlap with 1, indicates a significant variation in the likelihood of clients asking questions about divorce based on their age. Specifically, for each unit increase in a client's age, the odds of them inquiring about divorce decrease by 3.40%.
 
-For Number in Household, the odd ratio is 1.09, with 95% CI being 1.07 and 1.10.  The confidence interval did not cross 1, which means there is a difference between clients with different number of people in household, so it’s significant for our prediction. This means that the odds of client asking question related to divorce will increase by 9% for every unit increases of number of people in client’s household with true population effect between 7% and 10%. 
+In comparison to male clients, those who are female exhibited higher odds (OR = 1.467, 95% CI = 1.397-1.541) of inquiring about divorce-related matters. In terms of percentage change, the likelihood of a female client posing divorce-related questions is approximately 46.7% greater than that of a male client.
 
-For Annual Income, the odd ratio is 0.999, with 95% CI being 0.999 and 1.00. The confidence interval crossed 1, which means there is no difference between clients with different annual income so it’s not significant for our prediction. 
+The odds ratio (OR) for Number in Household was found to be 1.070 (95% CI = 1.057-1.084). The confidence interval, which does not overlap with 1, indicates a significant variation in the likelihood of clients asking questions about divorce based on number of persons in their household. Specifically, for each unit increase in a client's Number in Household, the odds of them inquiring about divorce increase by 7%.
 
-For checking balance, the odd ratio is 0.99, with 95% CI being 0.99 and 0.99. The confidence interval did not cross 1, which means there is difference between clients of different checking balance when it comes to the odds of asking questions related to divorce. The influence of checking balance on the odds of clients asking divorce related question is equally weak as that of saving balance.
+In comparison to Caucasian clients, those who are African American exhibited lower odds (OR = 0.903, 95% CI = 0.846-0.964) of inquiring about divorce-related matters. In terms of percentage change, the likelihood of a African American client posing divorce-related questions is approximately 9.7% less than that of an Caucasian client.
 
-For state, let’s take Hawaii(StateAbbrHI) as an example, the odds ratio is 2.21 with 95% CI being 1.85 to 2.64. The confidence interval did not cross 1, which means there is difference between clients from Hawaii and  different states when it comes to the odds of asking questions related to divorce.  This means that the odds for clients from the state of Hawaii to ask question related divorce is 2.21 times more likely than the clients from other states, with the true population effect between 1.85 to 2.64.  
+The odds ratio (OR) for savings balance (OR = 0.999, 95% CI = 0.999-0.999) and checking balance (OR = 0.999, 95% CI = 0.999-0.999) were found to be nearly identically close to 1. Therefore it does not indicate a significant variation in the likelihood of clients asking questions about divorce based on their savings and checking balances.
 
-On the other hand, the state Georgia(StateAbbrGA), the odds ratio is  0.95 with 95% CI being 0.84 to 1.06. The confidence interval did cross 1, which means there is no difference between clients from Georgia and other different states when it comes to the odds of asking questions related to divorce. 
-
-
+In comparison to clients from the top 3 states (FL, TX, or IN), those who are located in any other State exhibited lower odds (OR = 0.931, 95% CI = 0.889-0.976) of inquiring about divorce-related matters. In terms of percentage change, the likelihood of a client located in the other states posing divorce-related questions is approximately 6.90% less than that of a client located in one of the top 3 states (FL, TX, or IN).
 
 ### Accuracy of Best Model
 
@@ -682,13 +680,6 @@ cat("\nThe accuracy of our best model was:", round(accuracy, 2), "%.")
 The accuracy classification table presented indicates that around 72% of the fitted values were accurately classified, as calculated by adding the number of correctly classified values (29730) to the number of false negatives (3118), and dividing it by the total number of observations (45731).
 
 In terms of accuracy, this implies that our model performs significantly better than a random guess. Randomly guessing the correct classification for divorce-related questions would yield a 50% chance of being accurate. However, our model surpasses this baseline, demonstrating a higher level of accuracy.
-
-
-
-
-
-
-
 
 # Summary & Conclusions
 
