@@ -107,7 +107,7 @@ Our goal is to provide guidance to the ABA regarding any recurring themes or eme
 
 # Visualization 1: Investigating the Top 5 Subcategories of Asked Questions
 
-```{r eval= TRUE, include=TRUE, echo=FALSE, fig.height=2.25, fig.width=5, fig.align='center'}
+```{r eval= TRUE, include=TRUE, echo=FALSE, fig.height=2, fig.width=5, fig.align='center'}
 # Visualization 1
 top_subcats <- questions %>%
   group_by(Subcategory) %>%
@@ -133,8 +133,6 @@ Our project aims to begin by exploring the subcategories of legal questions that
 
 According to our horizontal lollipop chart, it is evident that within the top 5 subcategories, two of the highest-ranking categories of inquiries made by clients on the online platform pertain to divorce. The subcategory "Family/Divorce/Custody" holds the highest occurrence among the top 5, with nearly double the number of clients asking questions compared to the second-ranking subcategory, "Other." This highlights the importance of adequately preparing volunteers to handle divorce-related queries.
 
-We find this situation fascinating as it prompts us to seek answers to inquiries like: "What are the key factors influencing divorce?", "Does clients' background influence their inclination to ask divorce-related questions on the ABA online platform?", and, importantly, "How can we adequately train our volunteers to handle these divorce-related inquiries?"
-  
 
 # Visualization 2: US Map of Divorce Related Questions Distribution
 
@@ -196,9 +194,9 @@ colnames(usData) <- c("state", "lat", "long")
 
 ### Interpretation of visualization 2:
 
-By analyzing the quantity of divorce-related inquiries and their distribution across states, we can gain insights into the clients' backgrounds and identify the regions with the highest occurrence of divorce-related questions.
+By analyzing the quantity of divorce-related inquiries and their distribution across states, we can gain insights into the clients' backgrounds and identify the regions with the highest occurrence of divorce-related questions.States like Washington, Oregon, Nevada, Montana, Colorado, North Dakota, Minnesota, Ohio, and Kentucky are depicted in gray on the chart due to legal requirements and confidentiality obligations. These states are prohibited from disclosing clients' information, including the specific category of legal questions they ask.
 
-States like Washington, Oregon, Nevada, Montana, Colorado, North Dakota, Minnesota, Ohio, and Kentucky are depicted in gray on the chart due to legal requirements and confidentiality obligations. These states are prohibited from disclosing clients' information, including the specific category of legal questions they ask.
+We recognize that the absence of data points for certain states poses a challenge to our model. We categorize these missing data points as Missing at Random (MAR) and suggest a solution by employing listwise deletion or available-case analysis. Using this approach, we exclusively consider cases with complete data for our analysis and omit the missing data.
 
 Among the 42 states that permit the revealing of client details, Texas, Florida and Indiana demonstrate the greatest volume of inquiries concerning divorce law. Nonetheless, the prevalence of divorce-related questions takes on a distinct pattern when analyzed differently. When considering the number of queries per 100,000 residents, Texas, Florida and Indiana no longer appear exceptional. Instead, it is Wyoming and Maine that emerge as prominent locations where the rate of individuals frequently seeking online guidance regarding divorce matters are the highest.
 
@@ -507,9 +505,6 @@ model_comparison[2]
 print(summary(model2))
 ```
 
-<!-- $$ -->
-<!-- P(Divorce = 1) = \frac{e^{(\beta_0 + \beta_1X_1 + \beta_2X_2...\beta_nX_n)}}{1 +e^{(\beta_0 + \beta_1X_1 + \beta_2X_2...\beta_nX_n)}} -->
-<!-- $$ -->
 
 
 ### Log-Odds regression equation
@@ -559,44 +554,9 @@ test_obs <- data.frame(
 
 
 predict1 <- predict(model2, type = "response", test_obs)
-cat("The probability for a divorce related to be asked is:",predict1)
+cat("For the example, the probability for a divorce related to be asked is:",predict1)
 
 ```
-
-
-<!-- #### Example 2: -->
-
-<!-- white male 33 from fl single 1 in house 0 in savings and 0 in checking -->
-
-<!-- $$ -->
-<!-- \begin{aligned} -->
-<!-- logit(P(Divorce = 1)) &= -0.576 - (0.034 \cdot 33) + (0.068 \cdot 1) \\ &=-1.63 -->
-<!-- \end{aligned} -->
-<!-- $$ -->
-<!-- $$ -->
-<!-- P(Divorce = 1) = \frac{e^{-1.63}}{1 + e^{-1.63}} = 0.164 -->
-<!-- $$ -->
-
-<!-- ```{r eval= TRUE, include=TRUE, echo=FALSE} -->
-<!-- # Example 2: white male 33 from fl single 1 in house 0 in savings and 0 in checking -->
-<!-- test_obs <- data.frame( -->
-<!--   Age = 33, -->
-<!--   NumberInHousehold = 1, -->
-<!--   SavingsBalance = 0, -->
-<!--   CheckingBalance = 0, -->
-<!--   Ethnicity = "Caucasian", -->
-<!--   MaritalStatus = "Single", -->
-<!--   Gender = "Male", -->
-<!--   States = "Top 3 States" -->
-<!-- ) -->
-
-
-<!-- predict2 <- predict(model2, type = "response", test_obs) -->
-<!-- cat("The probability for a divorce related to be asked is:",predict2) -->
-<!-- ``` -->
-
-
-
 
 ## Assumptions
 
@@ -677,24 +637,24 @@ accuracy <- ((acc_table[1] + acc_table[4])/sum(acc_table))*100
 cat("\nThe accuracy of our best model was:", round(accuracy, 2), "%.")
 ```
 
-The accuracy classification table presented indicates that around 72% of the fitted values were accurately classified, as calculated by adding the number of correctly classified values (29730) to the number of false negatives (3118), and dividing it by the total number of observations (45731).
-
-In terms of accuracy, this implies that our model performs significantly better than a random guess. Randomly guessing the correct classification for divorce-related questions would yield a 50% chance of being accurate. However, our model surpasses this baseline, demonstrating a higher level of accuracy.
+The accuracy classification table presented indicates that around 72% of the fitted values were accurately classified, as calculated by adding the number of correctly classified values (29730) to the number of false negatives (3118), and dividing it by the total number of observations (45731). In terms of accuracy, this implies that our model performs significantly better than a random guess. Randomly guessing the correct classification for divorce-related questions would yield a 50% chance of being accurate. However, our model surpasses this baseline, demonstrating a higher level of accuracy.
 
 # Summary & Conclusions
 
-Based on the odds ratios obtained from our top-performing model, it is evident that clients hailing from South Dakota, Maine, and Hawaii exhibit approximately double the likelihood of inquiring about divorce-related matters in comparison to our chosen reference state, Florida. We selected Florida as our reference state due to its significant population, social and economic influence, while having a relatively modest frequency of divorce-related queries. By excluding states without any recorded divorce-related questions, it becomes apparent that Indiana and Nebraska have notably lower rates of such inquiries compared to other states. The odds ratio, slightly exceeding 0.2, indicates that clients from these two states have approximately one-fifth the likelihood of asking a divorce-related question compared to clients from Florida, holding all other variables constant. It is important to note that although numerous states provide client data, many lack sufficient information to draw statistically significant conclusions. However, none of the aforementioned states fall into this category.
+Based on the odds ratios obtained from our top-performing model, it is evident that clients hailing from states other than the Top 3 States, Florida, Texas, or Indiana, exhibit slightly less likelihood of inquiring about divorce-related matters in comparison to our chosen reference state groups, Top 3 States. The odds ratio for All Other States, slightly exceeding 0.93, indicates that clients from states other than the top 3 have approximately a slightly lower likelihood of asking a divorce-related question compared to clients from Top 3 states, holding all other variables constant. 
 
-Apart from the state of origin, the variables of age, family size, and marital status exhibit significant predictive power in determining whether a client will inquire about divorce-related matters. According to the odds ratio, for each passing year, the likelihood of a client's question being related to divorce decreases by approximately 0.96, holding all other variables constant. All marital statuses, except for "widow," exhibit odds ratios greater than 1, indicating an increased likelihood of divorce-related questions compared to our reference group, "single." Notably, being "separated" raises the odds by nearly a factor of 13, while holding all other variables constant. This aligns with the expectation that clients seeking divorce advice are more likely to be in strained relationships, while being single suggests an absence of a relationship altogether. In conclusion, the balances of both checking and savings accounts have a strong predictive influence on the category of questions a client may ask. Conversely, we did not observe any predictive capability regarding a client's annual income.
+Apart from the state of origin, the variables of age, family size, gender, ethnicity, and marital status exhibit significant predictive power in determining whether a client will inquire about divorce-related matters. According to the odds ratio, for each passing year, the likelihood of a client's question being related to divorce decreases by approximately 0.96, holding all other variables constant. All marital statuses exhibit odds ratios greater than 1, indicating an increased likelihood of divorce-related questions compared to our reference group, "single." Notably, being "separated" raises the odds by nearly a factor of 8.7, while holding all other variables constant. This aligns with the expectation that clients seeking divorce advice are more likely to be in strained relationships, while being single suggests an absence of a relationship altogether. 
 
-The key lesson we learned from this assignment is that statistical computing has the potential to be applied in professional domains for predicting trends and effectively allocating resources. Going beyond the project's requirements and outcomes, we believe the American Bar Association could employ the models we developed to determine the states requiring more divorce lawyers and collaborate with state governments accordingly. While our data was limited to lower-income individuals and pro bono attorneys, we suspect that the trends we identified are indicative of other income brackets and paid attorneys on a broader scale. However, the most significant constraint we faced in exploring our research question was the insufficient data from certain states and the apparent disparity in data availability among other states. 
+When comparing the gender of clients, we can confirm that female clients, in relation to our reference gender "Male," have a slightly higher odds ratio of 1.46. This indicates an increase in the likelihood of asking a divorce-related question by a factor of approximately 1.5. Regarding the ethnicity of clients, African American clients have a slightly lower odds ratio of 0.9 compared to our reference ethnicity "Caucasian," while clients of all other ethnicities have a slightly higher odds ratio of 1.1. Neither ethnic group shows a significant difference from an odds ratio of 1, indicating minimal variation between the selected variable and the corresponding outcome. In conclusion, we did not observe any predictive capability concerning a client's checking and savings accounts, as both their odds ratios were very close to 1, specifically 0.99. This suggests that there is no discernible difference between the selected variable and the corresponding outcome.
 
-Another crucial lesson we learned from this project is the significance of establishing a clear objective when dealing with unorganized data. Given the extensive volume of data at our disposal, it becomes even more crucial to formulate specific research questions early on and filter the data accordingly. The majority of datasets contain far more information than what is necessary for drawing significant conclusions. In the dataset obtained from the American Bar Association pro bono service, we discovered that a select few states, precisely ten, lacked the provision of clients' demographic information.  Nevertheless, since we have excluded those states from our dataset, we can confidently affirm that we possess significant predictive power for clients residing in states that did provide client demographics.
+The key lesson we learned from this assignment is that statistical computing has the potential to be applied in professional domains for predicting trends and effectively allocating resources. Going beyond the project's requirements and outcomes, we believe the American Bar Association could employ the models we developed to determine the states requiring more divorce lawyers and collaborate with state governments accordingly. Another crucial lesson we learned from this project is the significance of establishing a clear objective when dealing with unorganized data. Given the extensive volume of data at our disposal, it becomes even more crucial to formulate specific research questions early on and filter the data accordingly. The majority of the datasets contain far more information than what is necessary for drawing significant conclusions. 
 
-We encountered another limitation during our research. We found that the states of California, Idaho, South Carolina, and Wisconsin did not classify the client's legal questions related to divorce into specific subcategories. Instead, they grouped them under broader categories like Family and Children. As a result, we couldn't determine the extent to which clients in those states sought divorce-related information. However, since these states didn't provide any divorce-related data, similar to the previous limitation, we can assert with confidence that our model has significant predictive capability for clients in states where categorical data on divorces was available. Overall, we are confident that our model can accurately predict outcomes with approximately 75% accuracy for around 72% of the United States.
+However, the most significant constraint we faced in exploring our research question was the insufficient data from certain states and the apparent disparity in data availability among other states. In the dataset obtained from the American Bar Association pro bono service, we discovered that a select few states, precisely nine, lacked the provision of clients' demographic information. We encountered another limitation during our research. We found that the states of California, Idaho, South Carolina, and Wisconsin did not classify the client's legal questions related to divorce into specific subcategories. Instead, they grouped them under broader categories like Family and Children. Consequently, the level of interest among clients in those states regarding divorce-related information remains indeterminable. Nonetheless, considering the absence of client demographics or divorce-related data from these states, we opted for listwise deletion as a method to handle the missing data.
 
-A potential strategy to address the constraints mentioned earlier involves incorporating predictor variables that encompass the entirety of the United States, instead of solely relying on data from particular states. This approach would enable us to accurately predict the client's legal inquiries nationwide, without the need to specify the states for which we possess accurate predictions. Another option could be for the American Bar Association (ABA) to mandate that states provide their data within a nationwide framework, guaranteeing consistent consideration of demographics and legal query categories.
+We acknowledge the significant challenge posed by the absence of data points for certain states in our model. These missing data points were classified as Missing at Random (MAR), and we proposed two solutions: listwise deletion or available-case analysis. With these approaches, we considered only cases with complete data, excluding the missing data from our analysis. An alternative approach would be imputation, which involves replacing missing data with substituted values. If we had implemented imputation, regression imputation would have been a sensible choice. This method involves running a regression using the available data to estimate the missing values, thereby increasing the sample size and reducing the standard error. Subsequently, the entire dataset would be reanalyzed. Despite the limitations imposed by the missing data, we are confident in the significant predictive capability of our model for clients residing in states where client demographics and categorical divorce data were available. Overall, our model exhibits approximately 72% accuracy in predicting outcomes for approximately 74% of the United States, providing us with confidence in its reliability.
 
-After examining various scientific literature, we were unable to find any studies that reported similar findings related to our research question. However, we did successfully explore different sets of literature concerning the factors that contribute to accurately predicting divorce. This exploration is relevant to our goal of understanding our predictive power in divorce-related legal matters. Specifically, the National Institutes of Health (NIH) published an article discussing the risks of predicting divorce without conducting proper crossvalidation analyses and sensitivity tests. They concluded that "exceptional initial predictive results can assist us in enhancing models by identifying significant risk factors" [1]. This conclusion allows us to better evaluate the accuracy of our predictive model. Although we achieved a 74.75% success rate in predicting divorce-related queries from clients, it is important to conduct thorough crossvalidation and sensitivity testing to avoid overestimating the model's predictive capabilities. Instead, we should focus on the model's ability to identify crucial and meaningful predictors.
+Another potential strategy to address the constraints mentioned earlier involves incorporating predictor variables that encompass the entirety of the United States, instead of solely relying on data from particular states. This approach would enable us to accurately predict the client's legal inquiries nationwide, without the need to specify the states for which we possess accurate predictions. Another option could be for the American Bar Association (ABA) to mandate that states provide their data within a nationwide framework, guaranteeing consistent consideration of demographics and legal query categories.
 
-[1] Heyman RE, Smith Slep AM. The Hazards of Predicting Divorce Without Crossvalidation. J Marriage Fam. 2001 May;63(2):473-479. doi: 10.1111/j.1741-3737.2001.00473.x. PMID: 17066126; PMCID: PMC1622921.
+After examining various scientific literature, we were unable to find any studies that reported similar findings related to our research question. However, we did successfully explore different sets of literature concerning the factors that contribute to accurately predicting divorce. This exploration is relevant to our goal of understanding our predictive power in divorce-related legal matters. Specifically, the National Institutes of Health (NIH) published an article discussing the risks of predicting divorce without conducting proper cross-validation analyses and sensitivity tests. They concluded that "exceptional initial predictive results can assist us in enhancing models by identifying significant risk factors" [1]. This conclusion allows us to better evaluate the accuracy of our predictive model. Although we achieved a 71.83% success rate in predicting divorce-related queries from clients, it is important to conduct thorough cross-validation and sensitivity testing to avoid overestimating the model's predictive capabilities. Instead, we should focus on the model's ability to identify crucial and meaningful predictors.
+
+[1] Heyman RE, Smith Slep AM. The Hazards of Predicting Divorce Without Crossvalidation. J Marriage Fam. 2001 May;63(2):473-479. doi: 10.1111/j.1741-3737.2001.00473.x.
