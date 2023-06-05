@@ -105,9 +105,9 @@ The American Bar Association (ABA) offers free legal services throughout the Uni
 
 Our goal is to provide guidance to the ABA regarding any recurring themes or emerging patterns observed in these interactions. This information would assist the ABA in advising its state partners, developing resources to address identified patterns, and formulating outreach strategies to effectively engage potential users and volunteers.
 
-# Visualization 1: Investigating the Top 15 Subcategories of Asked Questions
+# Visualization 1: Investigating the Top 5 Subcategories of Asked Questions
 
-```{r eval= TRUE, include=TRUE, echo=FALSE}
+```{r eval= TRUE, include=TRUE, echo=FALSE, fig.height=2.25, fig.width=5, fig.align='center'}
 # Visualization 1
 top_subcats <- questions %>%
   group_by(Subcategory) %>%
