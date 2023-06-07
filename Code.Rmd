@@ -346,7 +346,7 @@ plot_grid(PlotCheckings, PlotSavings, ncol = 1, nrow = 2)
 
 By analyzing the financial status of clients in relation to their marital status, we can gain insights into whether their likelihood of asking divorce-related questions is influenced by their financial situation and relationship status. We filtered the data to contain only the 4 largest groups of marital status for comparison.
 
-Based on the aforementioned visualization, it becomes apparent that clients seeking divorce-related advice generally have a higher average annual income compared to other clients. However, an exception arises within the married/remarried category, which exhibits even higher annual income than individuals in other marital statuses across both question categories. The states also acknowledge this difference and typically grant higher-income married individuals the opportunity to ask pro bono questions. In other words, the income threshold for asking questions free of charge is noticeably higher for those who are married or remarried in comparison to individuals in other marital statuses. Additionally, it is worth noting that if someone prefers not to disclose their marital status when asking a divorce-related question, their permitted income to inquire without charges decreases.
+Based on the aforementioned visualization, it becomes apparent that clients seeking divorce-related advice generally have a higher average annual income compared to other clients. However, an exception arises within the married/remarried category, which exhibits even higher annual income than individuals in other marital statuses across both question categories. The states also acknowledge this difference and typically grant higher-income married individuals the opportunity to ask pro bono questions. In other words, the income threshold for asking questions free of charge is noticeably higher for those who are married or remarried in comparison to individuals in other marital statuses. 
   
 On average, clients seeking divorce-related guidance tend to have slightly lower checking and savings balances compared to clients with different types of inquiries. Among all marital statuses seeking divorce advice, individuals who are divorced possess the highest average checking balance, while those who are single or separated have the lowest. Regardless of the legal advice they seek, single and separated clients generally do not maintain high balances in their checking or savings accounts. In contrast to the data on annual/allowed income, married clients do not exhibit significantly higher checking or savings balances compared to other clients.
 
@@ -400,6 +400,9 @@ num_sex <- num_sex %>%
 #num_sex
 ```
 
+
+
+
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
 model_data <- data_overall 
 
@@ -451,6 +454,7 @@ model_data[model_data == "NULL"] = NA
 model_data <- na.omit(model_data)
 ```
 
+
 ```{r eval= TRUE, include=FALSE, echo=FALSE}
 # Model 1:All independent variables used 
 model1 <- glm(Subcategory ~ ., data = model_data, family = "binomial")
@@ -479,20 +483,34 @@ model3 <- glm(Subcategory ~ AnnualIncome + SavingsBalance + CheckingBalance,
 model_comparison <- compareGLM(model1, model2, model3)
 ```
 
-### Comparison of Models
 
-To identify the optimal model, we assessed the Akaike Information Criterion (AIC) and Bayesian Information Criterion (BIC) values associated with the three logistic regression models we constructed. 
+### Independent and Dependent variables
 
-Based on the principle that model selection criteria strike a balance between goodness of fit and model complexity, it is known that AIC tends to favor more complex models, whereas BIC penalizes complexity more rigorously. Lower values of AIC or BIC indicate a better fit. By examining the chart, we note that the lowest AIC and BIC values correspond to our second model which included only the significant independent variables that were present in the initial model that contained all of the independent variables.
+We transformed the categorical variables into subsets to decrease the number of parameters utilized in our regression models. This transformation involved selecting a few factors with the highest frequency and grouping the remaining factors as a distinct category.
 
-Therefore we selected model 2 as it had both the lowest AIC and BIC scores. AIC is a better indicator to use in answering our research question, as it maximizes the predictive power of the data for any future data. However, since both the AIC and BIC values agree on which model out of the three we created is the best, we can safely choose model 2 moving forward.
+The MaritalStatus variable was modified to encompass 5 levels: "Single," "Divorced or Widowed," "Married / remarried," "Separated," and "All Other Marital Statuses."
 
+The StateAbbr variable was modified to have 2 levels: "Top 3 States" (consisting of FL, TX, and IN) and "All Other States."
+
+The Ethnicity variable was modified to have 4 levels: "Caucasian," "African American," "Not Hispanic or Latino," and "All Other Ethnicities."
+
+The Gender variable was modified to have 3 levels: "Male," "Female," and "All Other Genders."
+
+### The Three Logistic Models
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
 cat("The 3 models formulae:\n\n")
 cat("Model 1: Subcategory ~ Age + NumberInHousehold + MaritalStatus + AnnualIncome","\n", " + SavingsBalance + CheckingBalance + AllowedIncome + Ethnicity", "\n", " + Gender + States\n")
 cat("Model 2: Subcategory ~ Age + NumberInHousehold + MaritalStatus + SavingsBalance", "\n", " + CheckingBalance + Gender + States + Ethnicity\n")
 cat("Model 3: Subcategory ~ AnnualIncome + SavingsBalance + CheckingBalance\n")
 ```
+
+### Comparison of Models
+To identify the optimal model, we assessed the Akaike Information Criterion (AIC) and Bayesian Information Criterion (BIC) values associated with the three logistic regression models we constructed. 
+
+Based on the principle that model selection criteria strike a balance between goodness of fit and model complexity, it is known that AIC tends to favor more complex models, whereas BIC penalizes complexity more rigorously. Lower values of AIC or BIC indicate a better fit. By examining the chart, we note that the lowest AIC and BIC values correspond to our second model which included only the significant independent variables that were present in the initial model that contained all of the independent variables.
+
+Therefore we selected model 2 as it had both the lowest AIC and BIC scores. AIC is a better indicator to use in answering our research question, as it maximizes the predictive power of the data for any future data. However, since both the AIC and BIC values agree on which model out of the three we created is the best, we can safely choose model 2 moving forward.
+
 The three model's fit criteria:
 
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
@@ -504,7 +522,15 @@ model_comparison[2]
 ```{r include=TRUE, echo=FALSE}
 print(summary(model2))
 ```
+In our optimal model, the independent variables that serve as the most significant predictors of the binary dependent variable "subcategory" (whether it pertains to divorce or not) are utilized based on the summary of model 1. We considered "Single," "Caucasian," "Male," and "Top 3 States" as our reference levels for the categorical variables.
 
+The predictors that are used for our optimal model(model 2) from summary of model 1 deemed statistically significant with a confidence level of 5% are:
+
+```{r eval= TRUE, include=TRUE, echo=FALSE}
+# The predictors that are considered significant at the 5% level of confidence are:
+sig_pred <- c(" Age", "NumberInHousehold", "MaritalStatus(All Other Marital Statuses)", "MaritalStatus(Divorced or Widowed)","MaritalStatus(Married / remarried)", "MaritalStatus(Separated)", "SavingsBalance", "CheckingBalance", "Gender(All Other Genders)", "Gender(Female)", "States(All Other States)", "Ethnicity(African American)", "Ethnicity(All Other Ethnicities)")
+cat(sig_pred, sep="\n ")
+```
 
 
 ### Log-Odds regression equation
@@ -578,28 +604,6 @@ vif
 ```
 
 
-### Independent and Dependent variables
-
-We transformed the categorical variables into subsets to decrease the number of parameters utilized in our regression models. This transformation involved selecting a few factors with the highest frequency and grouping the remaining factors as a distinct category.
-
-The MaritalStatus variable was modified to encompass 5 levels: "Single," "Divorced or Widowed," "Married / remarried," "Separated," and "All Other Marital Statuses."
-
-The StateAbbr variable was modified to have 2 levels: "Top 3 States" (consisting of FL, TX, and IN) and "All Other States."
-
-The Ethnicity variable was modified to have 4 levels: "Caucasian," "African American," "Not Hispanic or Latino," and "All Other Ethnicities."
-
-The Gender variable was modified to have 3 levels: "Male," "Female," and "All Other Genders."
-
-In our optimal model, the independent variables that serve as the most significant predictors of the binary dependent variable "subcategory" (whether it pertains to divorce or not) are utilized. We considered "Single," "Caucasian," "Male," and "Top 3 States" as our reference levels for the categorical variables.
-
-The predictors deemed statistically significant with a confidence level of 5% are:
-
-```{r eval= TRUE, include=TRUE, echo=FALSE}
-# The predictors that are considered significant at the 5% level of confidence are:
-sig_pred <- c(" Age", "NumberInHousehold", "MaritalStatus(All Other Marital Statuses)", "MaritalStatus(Divorced or Widowed)","MaritalStatus(Married / remarried)", "MaritalStatus(Separated)", "SavingsBalance", "CheckingBalance", "Gender(All Other Genders)", "Gender(Female)", "States(All Other States)", "Ethnicity(African American)", "Ethnicity(All Other Ethnicities)")
-cat(sig_pred, sep="\n ")
-```
-
 ## Odds Ratio and Confidence Intervals for optimum model
 
 ```{r eval= TRUE, include=TRUE, echo=FALSE}
@@ -643,11 +647,11 @@ The accuracy classification table presented indicates that around 72% of the fit
 
 Based on the odds ratios obtained from our top-performing model, it is evident that clients hailing from states other than the Top 3 States, Florida, Texas, or Indiana, exhibit slightly less likelihood of inquiring about divorce-related matters in comparison to our chosen reference state groups, Top 3 States. The odds ratio for All Other States, slightly exceeding 0.93, indicates that clients from states other than the top 3 have approximately a slightly lower likelihood of asking a divorce-related question compared to clients from Top 3 states, holding all other variables constant. 
 
-Apart from the state of origin, the variables of age, family size, gender, ethnicity, and marital status exhibit significant predictive power in determining whether a client will inquire about divorce-related matters. According to the odds ratio, for each passing year, the likelihood of a client's question being related to divorce decreases by approximately 0.96, holding all other variables constant. All marital statuses exhibit odds ratios greater than 1, indicating an increased likelihood of divorce-related questions compared to our reference group, "single." Notably, being "separated" raises the odds by nearly a factor of 8.7, while holding all other variables constant. This aligns with the expectation that clients seeking divorce advice are more likely to be in strained relationships, while being single suggests an absence of a relationship altogether. 
+Apart from the state of origin, the variables of age, family size, gender, ethnicity, and marital status exhibit significant predictive power in determining whether a client will inquire about divorce-related matters. According to the odds ratio, for each passing year, the likelihood of a client's question being related to divorce decreases by approximately 0.96, holding all other variables constant. All marital statuses exhibit odds ratios greater than 1, indicating an increased likelihood of divorce-related questions compared to our reference group, "single." Notably, being "separated" raises the odds by nearly a factor of 8.7, while holding all other variables constant. 
 
 When comparing the gender of clients, we can confirm that female clients, in relation to our reference gender "Male," have a slightly higher odds ratio of 1.46. This indicates an increase in the likelihood of asking a divorce-related question by a factor of approximately 1.5. Regarding the ethnicity of clients, African American clients have a slightly lower odds ratio of 0.9 compared to our reference ethnicity "Caucasian," while clients of all other ethnicities have a slightly higher odds ratio of 1.1. Neither ethnic group shows a significant difference from an odds ratio of 1, indicating minimal variation between the selected variable and the corresponding outcome. In conclusion, we did not observe any predictive capability concerning a client's checking and savings accounts, as both their odds ratios were very close to 1, specifically 0.99. This suggests that there is no discernible difference between the selected variable and the corresponding outcome.
 
-The key lesson we learned from this assignment is that statistical computing has the potential to be applied in professional domains for predicting trends and effectively allocating resources. Going beyond the project's requirements and outcomes, we believe the American Bar Association could employ the models we developed to determine the states requiring more divorce lawyers and collaborate with state governments accordingly. Another crucial lesson we learned from this project is the significance of establishing a clear objective when dealing with unorganized data. Given the extensive volume of data at our disposal, it becomes even more crucial to formulate specific research questions early on and filter the data accordingly. The majority of the datasets contain far more information than what is necessary for drawing significant conclusions. 
+The key lesson we learned from this assignment is that statistical computing has the potential to be applied in professional domains for predicting trends and effectively allocating resources. Going beyond the project's requirements and outcomes, we believe the American Bar Association could employ the models we developed to determine the states requiring more divorce lawyers and collaborate with state governments accordingly. 
 
 However, the most significant constraint we faced in exploring our research question was the insufficient data from certain states and the apparent disparity in data availability among other states. In the dataset obtained from the American Bar Association pro bono service, we discovered that a select few states, precisely nine, lacked the provision of clients' demographic information. We encountered another limitation during our research. We found that the states of California, Idaho, South Carolina, and Wisconsin did not classify the client's legal questions related to divorce into specific subcategories. Instead, they grouped them under broader categories like Family and Children. Consequently, the level of interest among clients in those states regarding divorce-related information remains indeterminable. Nonetheless, considering the absence of client demographics or divorce-related data from these states, we opted for listwise deletion as a method to handle the missing data.
 
